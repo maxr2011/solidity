@@ -2,13 +2,13 @@ pragma solidity ^0.6.7;
 
 contract A {
     function x() public virtual pure returns(string memory) {
-        return Contract A;
+        return "Contract A";
     }
 }
 
 contract B {
     function x() public virtual pure returns(string memory) {
-        return Contract B;
+        return "Contract B";
     }
 }
 
