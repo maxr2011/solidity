@@ -14,6 +14,7 @@ contract SimpleSet {
     }
 
     function addToArray(address who) public {
+        require (who != address(0));
         if (!inArray(who)) {
             // Append
             index[who] = store.length;
@@ -24,7 +25,7 @@ contract SimpleSet {
     function inArray(address who) public view returns (bool) 
     {
         // address 0x0 is not valid if pos is 0 is not in the array
-        return (who != address(0) && index[who] > 0);
+        return (index[who] > 0);
     }
 
     function getPosition(uint pos) public view returns (address) {
