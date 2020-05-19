@@ -24,7 +24,7 @@ contract Set {
     {
         
         // check for invalid address 0x0
-        require (element != address(0));
+        require (element != address(0), "Invalid Address");
         
         // check if already in array 
         if (!inArray(element)) {
@@ -51,7 +51,7 @@ contract Set {
     {
         
         // Address 0x0 is not valid 
-        require (element != address(0));
+        require (element != address(0), "Invalid Address");
         return index[element];
         
     }
