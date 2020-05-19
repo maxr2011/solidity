@@ -30,7 +30,7 @@ contract Event {
     // constructor with required parameters
     constructor(string memory event_name, string memory event_location, uint256 start_time, uint256 end_time) public
     {
-        id              = address(this);                     // set id to this contract address                         
+        id              = address(this);            // set id to this contract address                         
         initiator       = msg.sender;               // set initiator to sender address 
                                                     // at the time of creation there are 0 participants
         name            = event_name;               // set event name
@@ -42,6 +42,53 @@ contract Event {
                                                     // expiration time is optional 
         participants    = new SetStorage.Set();     // create Set for participants 
                                                     // at the time of creation there are 0 party items
+    }
+    
+    // get event info 
+    function getInfo() public view 
+    returns (
+        address         event_id, 
+        address         event_initiator,
+        string memory   event_name,
+        string memory   event_location,
+        uint256         event_start_time,
+        uint256         event_end_time,
+        uint256         event_created_time,
+        SetStorage.Set  event_participants
+    )
+    {
+        return (id, 
+                initiator,
+                name,
+                location,
+                time_start,
+                time_end,
+                time_created,
+                participants);
+    }
+    
+    // attend this event 
+    function participate() public
+    {
+        // check if participant is initiator
+        require(msg.sender != initiator);
+        
+        // add participant address
+        participants.addToArray(msg.sender);
+    }
+    
+    // change the start time 
+    function changeStartTime(uint256 time) public
+    {
+        // set new start time
+        if(msg.sender == initiator) time_start = time;
+    }
+    
+    // change the end time
+    function changeEndTime(uint256 time) public
+    {
+        // set new end time
+        if(msg.sender == initiator) time_end = time;
     }
     
 }
