@@ -7,6 +7,7 @@ contract Event {
     
     // variables
     address             private id;                      // contract address of the event 
+    address             payable private manager;         // event manager contract address
     address             payable private initiator;       // owner address of the creator
     SetStorage.Set      private participants;            // owner addresses of participants
     string              private name;                    // name of the event 
@@ -16,6 +17,13 @@ contract Event {
     uint256             private time_start;              // when the event starts        - in unix time format
     uint256             private time_end;                // when the event ends          - in unix time format 
     uint256             private time_expiration;         // when the event expires       - in unix time format 
+    
+    // check for event manager contract
+    // only manager has write access
+    modifier onlyManager {
+        require(msg.sender == manager, "Access is only allowed for manager.");
+        _;
+    }
     
     PartyItem[] public party_items;                     // items to bring with 
     
@@ -28,13 +36,18 @@ contract Event {
     }
     
     // constructor with required parameters
-    constructor(string memory event_name, string memory event_location, uint256 start_time, uint256 end_time) public
+    constructor(address payable event_creator, 
+                string memory event_name, 
+                string memory event_location, 
+                uint256 start_time, 
+                uint256 end_time) public
     {
         
         // assign variables
         id              = address(this);            // set id to this contract address                         
-        initiator       = msg.sender;               // set initiator to sender address 
+        initiator       = event_creator;            // set initiator to event creator address 
                                                     // at the time of creation there are 0 participants
+        manager         = msg.sender;               // set manager to event manager contract address
         name            = event_name;               // set event name
                                                     // description is optional 
         location        = event_location;           // set event location
@@ -78,6 +91,7 @@ contract Event {
     
     // get single element info 
     function getId()                public view returns(address         event_id)               { return id; }                  // returns event id
+    function getManager()           public view returns(address         event_manager)          { return manager; }             // returns event manager 
     function getInitiator()         public view returns(address         event_initiator)        { return initiator; }           // returns event initiator
     function getParticipants()      public view returns(SetStorage.Set  event_participants)     { return participants; }        // returns event participants
     function getName()              public view returns(string memory   event_name)             { return name; }                // returns event name 
@@ -91,10 +105,10 @@ contract Event {
     
     
     // attend this event 
-    function participate() public
+    function participate(address payable participant) public onlyManager
     {
         // check if participant is not the initiator
-        require(msg.sender != initiator, "you are already the initiator");
+        require(participant != initiator, "you are already the initiator");
         
         // check if event is not expired 
         require(time_expiration > now, "event is expired");
@@ -104,55 +118,36 @@ contract Event {
     }
     
     // remove participant 
-    function removeParticipant(address remove_participant) public {
-        // check if sender is initiator
-        // only the initiator has permissions to modify event participants
-        require(msg.sender == initiator, "only initiator can modify participants list");
-        
+    function removeParticipant(address remove_participant) public onlyManager 
+    {
         // remove participant
         participants.removeFromArray(remove_participant);
     }
     
     // update event name 
-    function updateName(string memory new_name) public 
+    function updateName(string memory new_name) public onlyManager
     {
-        // check if sender is initiator
-        // only the initiator has permissions to modify event name
-        require(msg.sender == initiator, "only initiator can modify name");
-        
         // set new name 
         name = new_name;
     }
     
     // update event location 
-    function updateLocation(string memory new_location) public 
+    function updateLocation(string memory new_location) public onlyManager
     {
-        // check if sender is initiator
-        // only the initiator has permissions to modify event location
-        require(msg.sender == initiator, "only initiator can modify location");
-        
         // set new location 
         location = new_location;
     }
     
     // set the event description
-    function setDescription(string memory new_description) public
+    function setDescription(string memory new_description) public onlyManager
     {
-        // check if sender is initiator
-        // only the initiator has permissions to modify event description
-        require(msg.sender == initiator, "only initiator can modify description");
-        
         // set the new description
         description = new_description;
     }
     
     // set the start time 
-    function setStartTime(uint256 time) public
+    function setStartTime(uint256 time) public onlyManager
     {
-        // check if sender is initiator
-        // only the initiator has permissions to modify event start time
-        require(msg.sender == initiator, "only initiator can modify start time");
-        
         // check if start time is before end time 
         require(time < time_end, "event start time must be before end time");
         
@@ -161,12 +156,8 @@ contract Event {
     }
     
     // set the end time
-    function setEndTime(uint256 time) public
+    function setEndTime(uint256 time) public onlyManager
     {
-        // check if sender is initiator
-        // only the initiator has permissions to modify event end time
-        require(msg.sender == initiator, "only initiator can modify end time");
-        
         // check if end time is after start time 
         require(time > time_start, "event end time must be after start time");
         
@@ -176,12 +167,8 @@ contract Event {
     
     // set the expiration time 
     // till when can users attend the event 
-    function setExpirationTime(uint256 time) public
+    function setExpirationTime(uint256 time) public onlyManager
     {
-        // check if sender is initiator
-        // only the initiator has permissions to modify event expiration time
-        require(msg.sender == initiator, "only initiator can modify expiration time");        
-        
         // check if expiration time is before or at start time
         require(time <= time_start, "event expiration time must be before start time");
         
