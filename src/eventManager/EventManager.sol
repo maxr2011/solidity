@@ -1,5 +1,6 @@
 pragma solidity ^0.6.7;
 
+import "eventManager/Set.sol" as SetStorage;
 import "eventManager/Event.sol" as EventContract;
 
 // Governance Contract 
@@ -9,11 +10,17 @@ import "eventManager/Event.sol" as EventContract;
 contract EventManager {
     
     // variables 
-    // todo do we save only the addresses or the whole event contracts in the event manager 
+    SetStorage.Set  private users;
+    SetStorage.Set  private events;
     
     // user authentication 
     
     // event creation 
+    
+    // get user events
+    function getUserEvents(address user) public view returns(address[] memory user_events) {
+        
+    }
     
     
 }
