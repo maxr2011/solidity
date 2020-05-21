@@ -30,9 +30,10 @@ contract Event {
     // party item 
     struct PartyItem 
     {
-        string      name;                                   // name of the item 
-        address     holder;                                 // participant who brings the item
-        bool        checked;                                // wether the item is already brought or not 
+        address     payable     holder;                                 // participant who brings the item
+        string                  name;                                   // name of the item 
+        uint256                 time_expiration;                        // when the item expires
+        bool                    checked;                                // wether the item is already brought or not 
     }
     
     // constructor with required parameters
@@ -174,6 +175,26 @@ contract Event {
         
         // set new expiration time 
         time_expiration = time;
+    }
+    
+    // check if participant
+    function isParticipant(address payable user) public view returns(bool is_participant)
+    {
+        // check if address is in participants set 
+        return participants.inArray(user);
+    }
+    
+    // manage party items 
+    
+    // add party item
+    function proposeItemToBringWith(address payable user_address, string memory item_name) public onlyManager
+    {
+        // check if user is initiator or participant
+        require((user_address == initiator) || (isParticipant(user_address)), "User is not participant");
+        
+        // insert new party item to the array 
+        // by default the time_expiration is the same as the one from the event and is checked is false
+        party_items.push(PartyItem(user_address, item_name, time_expiration, false));
     }
     
 }
