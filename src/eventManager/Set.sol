@@ -24,16 +24,14 @@ contract Set {
     {
         
         // check for invalid address 0x0
-        require (element != address(0), "Invalid Address");
+        require(element != address(0), "Invalid address");
         
         // check if already in array 
-        if (!inArray(element)) {
-            
-            // append
-            index[element] = store.length;
-            store.push(element);
-            
-        }
+        require(!inArray(element), "Address already in Array");
+        
+        // append
+        index[element] = store.length;
+        store.push(element);
         
     }
 
@@ -51,7 +49,9 @@ contract Set {
     {
         
         // Address 0x0 is not valid 
-        require (element != address(0), "Invalid Address");
+        // require(element != address(0), "Invalid address");
+        
+        if(element == address(0)) return 0;
         return index[element];
         
     }
@@ -61,7 +61,11 @@ contract Set {
     {
         
         // Position 0 is not valid
-        require (pos > 0, "this index is not valid"); 
+        require(pos > 0, "this index is not valid"); 
+        
+        // Check if pos is higher than store size 
+        require(pos < store.length, "out of bounds");
+        
         return store[pos];
         
     }
@@ -78,6 +82,8 @@ contract Set {
     // remove specific address element 
     function removeFromArray(address element) public
     {
+        // check if in array 
+        require(inArray(element), "Address not in Array");
         
         // move all other elements 
         uint pos = getPosition(element);
