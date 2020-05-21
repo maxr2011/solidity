@@ -1,4 +1,5 @@
 pragma solidity ^0.6.7;
+pragma experimental ABIEncoderV2;
 
 import "eventManager/Set.sol" as SetStorage;
 
@@ -30,6 +31,7 @@ contract Event {
     // party item 
     struct PartyItem 
     {
+        uint256                 item_id;                                // id of the item
         address     payable     holder;                                 // participant who brings the item
         string                  name;                                   // name of the item 
         uint256                 time_expiration;                        // when the item expires
@@ -62,6 +64,7 @@ contract Event {
         
         // do some logic checks 
         require(time_start < time_end, "event start time must be before end time");
+        require(time_start > now, "event start time must be in the future");
                     
     }
     
@@ -178,10 +181,16 @@ contract Event {
     }
     
     // check if participant
-    function isParticipant(address payable user) public view returns(bool is_participant)
+    function isParticipant(address payable user) public view onlyManager returns(bool is_participant)
     {
         // check if address is in participants set 
         return participants.inArray(user);
+    }
+    
+    // get all participants
+    function getAllParticipants() public view onlyManager returns(address [] memory all_participants) 
+    {
+        // todo implement
     }
     
     // manage party items 
@@ -192,9 +201,76 @@ contract Event {
         // check if user is initiator or participant
         require((user_address == initiator) || (isParticipant(user_address)), "User is not participant");
         
+        // new party item id 
+        uint256 party_item_id = getItemCount();
+        
         // insert new party item to the array 
         // by default the time_expiration is the same as the one from the event and is checked is false
-        party_items.push(PartyItem(user_address, item_name, time_expiration, false));
+        party_items.push(PartyItem(party_item_id, user_address, item_name, time_expiration, false));
+    }
+    
+    // get item count 
+    function getItemCount() public view onlyManager returns(uint256 item_count) 
+    {
+        return party_items.length;
+    }
+    
+    // get item info 
+    
+    // get item holder 
+    function getItemHolder(uint256 party_item_id) public view onlyManager returns(address payable item_holder) 
+    {
+        return party_items[party_item_id].holder;
+    }
+    
+    // get item name 
+    function getItemName(uint256 party_item_id) public view onlyManager returns(string memory item_name) 
+    {
+        return party_items[party_item_id].name;
+    }
+    
+    // get item expiration time 
+    function getItemExpirationTime(uint256 party_item_id) public view onlyManager returns(uint256 item_expiration_time)
+    {
+        return party_items[party_item_id].time_expiration;
+    }
+    
+    // get item checked 
+    function isItemChecked(uint256 party_item_id) public view onlyManager returns(bool is_item_checked)
+    {
+        return party_items[party_item_id].checked;
+    }
+    
+    // is item holder 
+    function isItemHolder(uint256 party_item_id, address potential_holder) public view onlyManager returns(bool is_item_holder)
+    {
+        return (getItemHolder(party_item_id) == potential_holder);
+    }
+    
+    // get all party items  - experimental
+    function getAllPartyItems() public view onlyManager returns(PartyItem [] memory all_party_items)
+    {
+        return party_items;
+    }
+    
+    // check and uncheck party item 
+    function updatePartyItemCheck(address payable user_address, uint256 party_item_id) public onlyManager 
+    {
+        // check if user is initiator or holder of the item 
+        require((user_address == initiator) || (isItemHolder(party_item_id, user_address)), "User is not allowed to update item info");
+        
+        // what was previous state of item 
+        bool item_state = isItemChecked(party_item_id);
+        
+        // set new item state
+        party_items[party_item_id].checked = !item_state;
+        
+    }
+    
+    // delete party item 
+    function deletePartyitem(address payable user_address, uint256 party_item_id) public onlyManager
+    {
+        // todo implement
     }
     
 }
