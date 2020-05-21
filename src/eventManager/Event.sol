@@ -7,17 +7,17 @@ import "eventManager/Set.sol" as SetStorage;
 contract Event {
     
     // variables
-    address             private id;                      // contract address of the event 
-    address             payable private manager;         // event manager contract address
-    address             payable private initiator;       // owner address of the creator
-    SetStorage.Set      private participants;            // owner addresses of participants
-    string              private name;                    // name of the event 
-    string              private description;             // description of the event 
-    string              private location;                // location of the event
-    uint256             private time_created;            // when the event was created   - in unix time format
-    uint256             private time_start;              // when the event starts        - in unix time format
-    uint256             private time_end;                // when the event ends          - in unix time format 
-    uint256             private time_expiration;         // when the event expires       - in unix time format 
+    address                     private id;                         // contract address of the event 
+    address             payable private manager;                    // event manager contract address
+    address             payable private initiator;                  // owner address of the creator
+    SetStorage.Set              private participants;               // owner addresses of participants
+    string                      private name;                       // name of the event 
+    string                      private description;                // description of the event 
+    string                      private location;                   // location of the event
+    uint256                     private time_created;               // when the event was created   - in unix time format
+    uint256                     private time_start;                 // when the event starts        - in unix time format
+    uint256                     private time_end;                   // when the event ends          - in unix time format 
+    uint256                     private time_expiration;            // when the event expires       - in unix time format 
     
     // check for event manager contract
     // only manager has write access
@@ -26,12 +26,12 @@ contract Event {
         _;
     }
     
-    PartyItem[] public party_items;                     // items to bring with 
+    PartyItem[] private party_items;                     // items to bring with 
     
     // party item 
     struct PartyItem 
     {
-        uint256                 item_id;                                // id of the item
+        uint256                 id;                                     // id of the item
         address     payable     holder;                                 // participant who brings the item
         string                  name;                                   // name of the item 
         uint256                 time_expiration;                        // when the item expires
@@ -186,11 +186,6 @@ contract Event {
         return participants.inArray(user);
     }
     
-    // get all participants
-    function getAllParticipants() public view onlyManager returns(address [] memory all_participants) 
-    {
-        // todo implement
-    }
     
     // manage party items 
     
@@ -215,6 +210,30 @@ contract Event {
     }
     
     // get item info 
+    function getItemInfo(uint256 party_item_id) public view onlyManager 
+    returns (
+        uint256                 item_id, 
+        address     payable     item_holder,
+        string      memory      item_name, 
+        uint256                 item_time_expiration,
+        bool                    item_checked
+    )
+    {
+        // check if item exists
+        require(itemExists(party_item_id), "Item does not exist");
+        
+        return (party_items[party_item_id].id, 
+                party_items[party_item_id].holder, 
+                party_items[party_item_id].name, 
+                party_items[party_item_id].time_expiration, 
+                party_items[party_item_id].checked);
+    }
+    
+    // check if item exists 
+    function itemExists(uint256 party_item_id) public view onlyManager returns(bool item_exists) 
+    {
+        return (party_item_id >= 0 && party_item_id < getItemCount());
+    }
     
     // get item holder 
     function getItemHolder(uint256 party_item_id) public view onlyManager returns(address payable item_holder) 
@@ -258,6 +277,9 @@ contract Event {
         // check if user is initiator or holder of the item 
         require((user_address == initiator) || (isItemHolder(party_item_id, user_address)), "User is not allowed to update item info");
         
+        // check if item exists
+        require(itemExists(party_item_id), "Item does not exist");
+        
         // what was previous state of item 
         bool item_state = isItemChecked(party_item_id);
         
@@ -269,6 +291,12 @@ contract Event {
     // delete party item 
     function deletePartyitem(address payable user_address, uint256 party_item_id) public onlyManager
     {
+        // check if user is initiator or holder of the item 
+        require((user_address == initiator) || (isItemHolder(party_item_id, user_address)), "User is not allowed to update item info");
+        
+        // check if item exists
+        require(itemExists(party_item_id), "Item does not exist");
+        
         // todo implement
     }
     
