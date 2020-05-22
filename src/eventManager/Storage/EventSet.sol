@@ -13,15 +13,36 @@ contract EventSet {
 
     // Array with address 
     EventContract.Event[] event_store;
-
-    // Constructor
-    constructor() public {
+    
+    constructor() public 
+    {
+        
+        // building 0x0 event 
+        address     payable     zrx_event_address       = address(0);                                   // event address: 0x0
+        string      memory      zrx_event_name          = "0xEvent";                                    // event name 
+        string      memory      zrx_event_location      = "0xLocation";                                 // event location 
+        uint256                 zrx_five_min_time       = 5 * 60 * 1000;                                // 5 min timeframe 
+        uint256                 zrx_event_time_start    = now + zrx_five_min_time;                      // start time five minutes from now 
+        uint256                 zrx_event_time_end      = zrx_event_time_start + zrx_five_min_time;     // end time five minutes after start time 
+        
+        // adding 0x0 event to array
+        addToArray(
+            new EventContract.Event(
+                zrx_event_address, 
+                zrx_event_name, 
+                zrx_event_location,
+                zrx_event_time_start,
+                zrx_event_time_end
+            )
+        );
         
     }
 
     // add new element to array
     function addToArray(EventContract.Event event_element) public 
     {
+        // check for invalid event 
+        require(event_element != EventContract.Event(0), "Invalid Event");
         
         // check if already in array 
         require(!inArray(address(event_element)), "Event already in Array");
@@ -36,7 +57,6 @@ contract EventSet {
     function inArray(address event_address) public view returns (bool in_array) 
     {
         
-        // address 0x0 is not valid if pos is 0 is not in the array
         return (index[event_address] > 0);
         
     }
@@ -69,7 +89,7 @@ contract EventSet {
     function getElementCount() public view returns(uint element_count) 
     {
         
-        // Return Array size (minus the 0x0 address element)
+        // Return Array size (minus the 0x0 event)
         return event_store.length - 1;
         
     }
