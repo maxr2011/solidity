@@ -14,6 +14,7 @@ contract EventSet {
     // Array with address 
     EventContract.Event[] event_store;
     
+    // Constructor
     constructor() public 
     {
         
@@ -42,7 +43,7 @@ contract EventSet {
     function addToArray(EventContract.Event event_element) public 
     {
         // check for invalid event 
-        require(event_element != EventContract.Event(0), "Invalid Event");
+        require(address(event_element) != address(0), "Invalid Event");
         
         // check if already in array 
         require(!inArray(address(event_element)), "Event already in Array");
@@ -57,6 +58,7 @@ contract EventSet {
     function inArray(address event_address) public view returns (bool in_array) 
     {
         
+        // event 0x0 is not valid
         return (index[event_address] > 0);
         
     }
