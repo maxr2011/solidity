@@ -69,6 +69,7 @@ contract EventManager {
     // user registration 
     // access: everybody can register
     function register() public 
+    returns (uint user_id)
     {
         // user address 
         address payable user_address = msg.sender;
@@ -78,6 +79,9 @@ contract EventManager {
         
         // register new user 
         user_storage.addToArray(user_address);
+        
+        // return user id 
+        return user_storage.getPosition(user_address);
     }
     
     // get user count 
@@ -104,7 +108,7 @@ contract EventManager {
         string memory event_location, 
         uint256 event_start_time, 
         uint256 event_end_time    
-    ) public onlyUser 
+    ) public onlyUser returns (address new_event_address)
     {
         // new event 
         EventContract.Event new_event = new EventContract.Event(msg.sender, event_name, event_location, event_start_time, event_end_time);
@@ -114,10 +118,28 @@ contract EventManager {
         
         // add event address to event address storage 
         event_address_storage.addToArray(address(new_event));
+        
+        // return event address 
+        return address(new_event);
     }
     
+    // get event address by id 
+    // access: admin only 
+    function getEventAddressById(uint event_id) public view onlyAdmin returns(address event_address) 
+    {
+        return address(getEventById(event_id));
+    }
+    
+    // get event by id 
+    // access: admin only 
+    function getEventById(uint event_id) public view onlyAdmin returns(EventContract.Event event_element)
+    {
+        return event_storage.getByPosition(event_id);
+    }
+
     // get user events
     // check runtime - this can take very long
+    // access: user only 
     function getUserEvents() public view onlyUser returns(EventContract.Event[] memory user_events) 
     {
         // counter 
@@ -140,6 +162,24 @@ contract EventManager {
         
         // return user events 
         return user_events;
+    }
+
+    // get all events 
+    // access: admin only 
+    function getAllEvents() public view onlyAdmin returns(EventContract.Event[] memory all_events)
+    {
+        // counter 
+        uint j = 0;
+        
+        // iterate through event set 
+        // skip 0x0 address
+        for(uint i = 1; i < event_storage.getElementCount(); i++)
+        {
+            all_events[j] = event_storage.getByPosition(i);
+        }
+        
+        // return all events
+        return all_events;
     }
     
     // get user event by id 
