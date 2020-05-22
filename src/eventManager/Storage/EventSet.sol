@@ -1,70 +1,67 @@
 pragma solidity ^0.6.7;
 
-// Set - Store elements
+// import event contract
+import "eventManager/Event.sol" as EventContract;
+
+// EventSet - Store event contracts 
 // each element should be only once in this Set
-contract Set {
+contract EventSet {
     
     // Mapping from address to position in the array
     // 0 means the address is not in the array
     mapping (address => uint) index;
 
     // Array with address 
-    address[] store;
+    EventContract.Event[] event_store;
 
     // Constructor
     constructor() public {
         
-        // We will use position 0 to flag invalid address
-        store.push(address(0));
-        
     }
 
     // add new element to array
-    function addToArray(address element) public 
+    function addToArray(EventContract.Event event_element) public 
     {
         
-        // check for invalid address 0x0
-        require(element != address(0), "Invalid address");
-        
         // check if already in array 
-        require(!inArray(element), "Address already in Array");
+        require(!inArray(address(event_element)), "Event already in Array");
         
         // append
-        index[element] = store.length;
-        store.push(element);
+        index[address(event_element)] = event_store.length;
+        event_store.push(event_element);
         
     }
 
     // check if element is in array
-    function inArray(address element) public view returns (bool in_array) 
+    function inArray(address event_address) public view returns (bool in_array) 
     {
         
         // address 0x0 is not valid if pos is 0 is not in the array
-        return (index[element] > 0);
+        return (index[event_address] > 0);
         
     }
 
     // get position by specific element 
-    function getPosition(address element) public view returns (uint address_position)
+    function getPosition(address event_address) public view returns (uint address_position)
     {
         
         // Address 0x0 is not valid 
-        if(element == address(0)) return 0;
-        return index[element];
+        if(event_address == address(0)) return 0;
+        return index[event_address];
         
     }
 
     // get specific element by position
-    function getByPosition(uint pos) public view returns (address result_address) 
+    function getByPosition(uint pos) public view returns (EventContract.Event event_element) 
     {
         
         // Position 0 is not valid
         require(pos > 0, "this index is not valid"); 
         
         // Check if pos is higher than store size 
-        require(pos < store.length, "out of bounds");
+        require(pos < event_store.length, "out of bounds");
         
-        return store[pos];
+        return event_store[pos];
         
     }
     
@@ -73,30 +70,30 @@ contract Set {
     {
         
         // Return Array size (minus the 0x0 address element)
-        return store.length - 1;
+        return event_store.length - 1;
         
     }
     
     // remove specific address element 
-    function removeFromArray(address element) public
+    function removeFromArray(address event_address) public
     {
         // check if in array 
-        require(inArray(element), "Address not in Array");
+        require(inArray(event_address), "Address not in Array");
         
         // move all other elements 
-        uint pos = getPosition(element);
+        uint pos = getPosition(event_address);
         
-        for (uint i = pos; i < store.length-1; i++){
+        for (uint i = pos; i < event_store.length-1; i++){
             
             // move next element to current element
-            index[store[i+1]] = index[store[i]];
-            store[i] = store[i+1];
+            index[address(event_store[i+1])] = index[address(event_store[i])];
+            event_store[i] = event_store[i+1];
             
         }
         
         // Remove the last element of the array
-        delete index[element];
-        store.pop();
+        delete index[address(event_address)];
+        event_store.pop();
         
     }
     
