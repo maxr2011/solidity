@@ -1,6 +1,10 @@
 pragma solidity ^0.6.7;
 
-import "eventManager/Set.sol" as SetStorage;
+// import storage 
+import "eventManager/Storage/Set.sol" as SetStorage;
+import "eventManager/Storage/EventSet.sol" as EventStorage;
+
+// import event contract
 import "eventManager/Event.sol" as EventContract;
 
 // EVENTMANAGER 
@@ -11,14 +15,37 @@ import "eventManager/Event.sol" as EventContract;
 contract EventManager {
     
     // VARIABLES  
-    SetStorage.Set          private users;
-    SetStorage.Set          private events;
+    SetStorage.Set                  private user_storage;               // user address storage 
+    SetStorage.Set                  private event_address_storage;      // event address storage
+    
+    EventStorage.EventSet           private event_storage;              // event storage
+    
+    address                 payable private admin;                      // admin address
     
     // CONSTRUCTOR 
+    // this is only called once with the final version
     constructor() public 
     {
-        users   = new SetStorage.Set();
-        events  = new SetStorage.Set();
+        // create users and events sets where the addresses are stored 
+        user_storage            = new SetStorage.Set();
+        event_address_storage   = new SetStorage.Set();
+        
+        // create event storage set 
+        event_storage           = new EventStorage.EventSet();
+        
+        // set admin address
+        admin = 0xad67a760e4Cb77e19F1B7B79d6B4901B5360DEF1;  
+        
+        // add admin as first user 
+        // users.addToArray(admin); // optional 
+    }
+    
+    
+    // ADMIN ACCESS 
+    // only admin can see or change sensible data
+    modifier onlyAdmin {
+        require(msg.sender == admin, "Access denied");
+        _;
     }
     
     
@@ -27,46 +54,51 @@ contract EventManager {
     // user authentication
     // only a user has access to his account, events, etc 
     modifier onlyUser {
-        require(users.inArray(msg.sender), "Access is only allowed for registered users");
+        require(user_storage.inArray(msg.sender), "Access is only allowed for registered users");
         _;
     }
     
     // user login status  
+    // access: everybody - every user has to log in
     function login() public view returns(bool is_user)
     {
         // return login status 
-        return users.inArray(msg.sender);
+        return user_storage.inArray(msg.sender);
     }
     
     // user registration 
+    // access: everybody can register
     function register() public 
     {
         // user address 
         address payable user_address = msg.sender;
         
         // check if user is already registered 
-        require(!users.inArray(user_address), "User already registered");
+        require(!user_storage.inArray(user_address), "User already registered");
         
         // register new user 
-        users.addToArray(user_address);
+        user_storage.addToArray(user_address);
     }
     
     // get user count 
-    function getUserCount() public view returns(uint256 user_count)
+    // access: admin only
+    function getUserCount() public view onlyAdmin returns(uint256 user_count)
     {
-        return users.getElementCount();
+        return user_storage.getElementCount();
     }
     
     // get user address by id 
-    function getUserById(uint256 id) public view returns(address payable user_address) 
+    // access: admin only
+    function getUserById(uint256 id) public view onlyAdmin returns(address payable user_address) 
     {
-        return payable(users.getByPosition(id));
+        return payable(user_storage.getByPosition(id));
     }
     
     
     // EVENT MANAGEMENT
     
     // event creation 
+    // access: user only 
     function createUserEvent( 
         string memory event_name, 
         string memory event_location, 
@@ -77,13 +109,37 @@ contract EventManager {
         // new event 
         EventContract.Event new_event = new EventContract.Event(msg.sender, event_name, event_location, event_start_time, event_end_time);
         
-        // add event to list
-        events.addToArray(address(new_event));
+        // add event to event storage
+        event_storage.addToArray(new_event);
+        
+        // add event address to event address storage 
+        event_address_storage.addToArray(address(new_event));
     }
     
     // get user events
-    function getUserEvents() public view onlyUser returns(address[] memory user_events) {
+    // check runtime - this can take very long
+    function getUserEvents() public view onlyUser returns(EventContract.Event[] memory user_events) 
+    {
+        // counter 
+        uint j = 0; 
         
+        // iterate through event set
+        // skip 0x0 address
+        for(uint i = 1; i < event_storage.getElementCount(); i++)
+        {
+            // save a temporary event 
+            EventContract.Event temporary_event = event_storage.getByPosition(i);
+            
+            // check if event was created by the user
+            if(temporary_event.getInitiator() == msg.sender) 
+            {
+                user_events[j] = temporary_event;
+                j++;
+            }
+        }
+        
+        // return user events 
+        return user_events;
     }
     
     // get user event by id 

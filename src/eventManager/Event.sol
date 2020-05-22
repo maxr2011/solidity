@@ -1,7 +1,8 @@
 pragma solidity ^0.6.7;
 pragma experimental ABIEncoderV2;
 
-import "eventManager/Set.sol" as SetStorage;
+// import storage
+import "eventManager/Storage/Set.sol" as SetStorage;
 
 // Event contract
 contract Event {
