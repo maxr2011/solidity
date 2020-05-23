@@ -136,6 +136,34 @@ contract EventManager {
     {
         return event_storage.getByPosition(event_id);
     }
+    
+    // get event position 
+    function getEventPosition(address event_address) public view returns(uint event_position)
+    {
+        return event_storage.getPosition(event_address);
+    }
+    
+    // get event info 
+    function getEventInfo(address event_address) public view 
+    returns(
+        address         event_id, 
+        address         event_initiator,
+        string memory   event_name,
+        string memory   event_location,
+        uint256         event_start_time,
+        uint256         event_end_time,
+        uint256         event_created_time,
+        SetStorage.Set  event_participants
+    ) {
+        // get event position by address
+        uint event_position = getEventPosition(event_address);
+        
+        // get event by position 
+        EventContract.Event event_info = event_storage.getByPosition(event_position);
+        
+        // return event info 
+        return event_info.getInfo();
+    }
 
     // get user events
     // check runtime - this can take very long
@@ -183,7 +211,6 @@ contract EventManager {
     }
     
     // get user event by id 
-    
     
     
 }
