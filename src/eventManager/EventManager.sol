@@ -138,13 +138,15 @@ contract EventManager {
     }
     
     // get event position 
-    function getEventPosition(address event_address) public view returns(uint event_position)
+    // access: user only 
+    function getEventPosition(address event_address) public view onlyUser returns(uint event_position)
     {
         return event_storage.getPosition(event_address);
     }
     
     // get event info 
-    function getEventInfo(address event_address) public view 
+    // access: user only
+    function getEventInfo(address event_address) public view onlyUser
     returns(
         address         event_id, 
         address         event_initiator,
@@ -168,14 +170,14 @@ contract EventManager {
     // get user events
     // check runtime - this can take very long
     // access: user only 
-    function getUserEvents() public view onlyUser returns(EventContract.Event[] memory user_events) 
+    function getUserEvents() public view onlyUser returns(EventContract.Event [] memory user_events) 
     {
         // counter 
         uint j = 0; 
         
         // iterate through event set
         // skip 0x0 address
-        for(uint i = 1; i < event_storage.getElementCount(); i++)
+        for(uint i = 1; i < event_storage.getElementCount()+1; i++)
         {
             // save a temporary event 
             EventContract.Event temporary_event = event_storage.getByPosition(i);
@@ -201,7 +203,7 @@ contract EventManager {
         
         // iterate through event set 
         // skip 0x0 address
-        for(uint i = 1; i < event_storage.getElementCount(); i++)
+        for(uint i = 1; i < event_storage.getElementCount()+1; i++)
         {
             all_events[j] = event_storage.getByPosition(i);
         }
