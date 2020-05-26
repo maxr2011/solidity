@@ -123,11 +123,11 @@ contract EventManager {
         return address(new_event);
     }
     
-    // get event address by id 
+    // get event count
     // access: admin only 
-    function getEventAddressById(uint event_id) public view onlyAdmin returns(address event_address) 
+    function getEventCount() public view onlyAdmin returns(uint256 event_count) 
     {
-        return address(getEventById(event_id));
+        return event_storage.getElementCount();
     }
     
     // get event by id 
@@ -166,53 +166,23 @@ contract EventManager {
         // return event info 
         return event_info.getInfo();
     }
+    
+    // get all events 
+    // access: admin only 
+    function getAllEvents() public view onlyAdmin returns(EventContract.Event[] memory all_events)
+    {
+        // return event array 
+        return event_storage.getEventArray();
+    }
 
     // get user events
     // check runtime - this can take very long
     // access: user only 
     function getUserEvents() public view onlyUser returns(EventContract.Event [] memory user_events) 
     {
-        // counter 
-        uint j = 0; 
-        
-        // iterate through event set
-        // skip 0x0 address
-        for(uint i = 1; i < event_storage.getElementCount()+1; i++)
-        {
-            // save a temporary event 
-            EventContract.Event temporary_event = event_storage.getByPosition(i);
-            
-            // check if event was created by the user
-            if(temporary_event.getInitiator() == msg.sender) 
-            {
-                user_events[j] = temporary_event;
-                j++;
-            }
-        }
-        
-        // return user events 
-        return user_events;
+        // return user event array 
+        return event_storage.getUserEventArray(msg.sender);
     }
 
-    // get all events 
-    // access: admin only 
-    function getAllEvents() public view onlyAdmin returns(EventContract.Event[] memory all_events)
-    {
-        // counter 
-        uint j = 0;
-        
-        // iterate through event set 
-        // skip 0x0 address
-        for(uint i = 1; i < event_storage.getElementCount()+1; i++)
-        {
-            all_events[j] = event_storage.getByPosition(i);
-        }
-        
-        // return all events
-        return all_events;
-    }
-    
-    // get user event by id 
-    
     
 }
