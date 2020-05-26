@@ -1,1 +1,8 @@
 Grillen, Randersacker, 1590771600, 1590778800
+[Owner: Admin]
+
+Schwimmen, Schweinfurt, 1597410000, 1597415400
+[Owner: User1] [Participants: Admin]
+
+Weihnachtsessen, Kitzingen, 1608994800, 1609005600
+[Owner: Admin] [Participants: Admin, User1]
