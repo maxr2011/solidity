@@ -77,6 +77,26 @@ contract Set {
         
     }
     
+    // get element array 
+    function getArray() public view returns(address [] memory set_array) 
+    {
+        
+        // initialize new array with size - 0x0 address
+        set_array = new address [](store.length-1);
+        
+        // get all elements without the 0x0 address
+        for(uint i = 0; i < store.length-1; i++) {
+            
+            // add address to output array 
+            set_array[i] = store[i+1];
+            
+        }
+        
+        // return array 
+        return set_array;
+        
+    }
+    
     // remove specific address element 
     function removeFromArray(address element) public
     {

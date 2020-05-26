@@ -96,6 +96,54 @@ contract EventSet {
         
     }
     
+    // get whole array 
+    function getEventArray() public view returns(EventContract.Event[] memory event_array) 
+    {
+        
+        // initialize new array with size - 0x0 event element 
+        event_array = new EventContract.Event [](event_store.length-1);
+        
+        // get all elements without the 0x0 event element 
+        for(uint i = 0; i < event_store.length-1; i++) {
+            
+            // add event element to output array 
+            event_array[i] = event_store[i+1];
+            
+        }
+        
+        // return array 
+        return event_array;
+    
+    }
+    
+    // get user specific array 
+    function getUserEventArray(address event_iniator) public view returns(EventContract.Event[] memory event_array)
+    {
+        
+        // initialize new array with size - 0x0 event element 
+        event_array = new EventContract.Event [](event_store.length-1);
+        
+        // get all elements without the 0x0 event element 
+        for(uint i = 0; i < event_store.length-1; i++) {
+            
+            // set a temporary event element variable 
+            EventContract.Event temporaryEvent = event_store[i+1];
+    
+            // check if user is the initiator of the event 
+            if(temporaryEvent.getInitiator() == event_iniator) {
+                
+                // add event element to output array 
+                event_array[i] = temporaryEvent;
+                
+            }
+            
+        }
+        
+        // return array 
+        return event_array;
+        
+    }
+    
     // remove specific address element 
     function removeFromArray(address event_address) public
     {
