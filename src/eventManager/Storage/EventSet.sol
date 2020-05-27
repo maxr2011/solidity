@@ -116,24 +116,50 @@ contract EventSet {
     
     }
     
-    // get user specific array 
-    function getUserEventArray(address event_iniator) public view returns(EventContract.Event[] memory event_array)
+    // get user specific array - own events or participating events
+    function getUserEventArray(address payable event_initiator, bool check_participant) public view returns(EventContract.Event[] memory event_array)
     {
         
-        // initialize new array with size - 0x0 event element 
-        event_array = new EventContract.Event [](event_store.length-1);
+        // create new variable to count user events 
+        uint user_event_count = 0;
+        
+        // loop array to count elements 
+        for(uint i = 0; i < event_store.length; i++) {
+            
+            // skip 0x0 event element 
+            if(i > 0) {
+                
+                EventContract.Event temporary_event = event_store[i];
+                
+                if(temporary_event.isInitiator(event_initiator) || (check_participant && temporary_event.isParticipant(event_initiator))) {
+                    
+                    user_event_count++;
+                    
+                }
+                
+            }
+            
+        }
+        
+        
+        // initialize new array with size of the user events 
+        event_array = new EventContract.Event [](user_event_count);
+        
+        // initialize new counter 
+        uint k = 0;
         
         // get all elements without the 0x0 event element 
-        for(uint i = 0; i < event_store.length-1; i++) {
+        for(uint j = 0; j < event_store.length-1; j++) {
             
             // set a temporary event element variable 
-            EventContract.Event temporaryEvent = event_store[i+1];
-    
-            // check if user is the initiator of the event 
-            if(temporaryEvent.getInitiator() == event_iniator) {
+            EventContract.Event temporaryEvent = event_store[j+1];
+            
+            // check if user is the initiator of the event
+            if(temporaryEvent.isInitiator(event_initiator) || (check_participant && temporaryEvent.isParticipant(event_initiator))) {
                 
                 // add event element to output array 
-                event_array[i] = temporaryEvent;
+                event_array[k] = temporaryEvent;
+                k++;
                 
             }
             
