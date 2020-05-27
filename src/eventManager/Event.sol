@@ -72,7 +72,7 @@ contract Event {
     // getter and setter
     
     // get event info 
-    function getInfo() public view onlyManager
+    function getInfo() public view
     returns (
         address         event_id, 
         address         event_initiator,
@@ -95,18 +95,18 @@ contract Event {
     }
     
     // get single element info 
-    function getId()                public view onlyManager returns(address         event_id)               { return id; }                  // returns event id
-    function getManager()           public view onlyManager returns(address         event_manager)          { return manager; }             // returns event manager 
-    function getInitiator()         public view onlyManager returns(address         event_initiator)        { return initiator; }           // returns event initiator
-    function getParticipants()      public view onlyManager returns(SetStorage.Set  event_participants)     { return participants; }        // returns event participants
-    function getName()              public view onlyManager returns(string memory   event_name)             { return name; }                // returns event name 
-    function getDescription()       public view onlyManager returns(string memory   event_description)      { return description; }         // returns event description
-    function getLocation()          public view onlyManager returns(string memory   event_location)         { return location; }            // returns event location
-    function getTimeCreated()       public view onlyManager returns(uint256         event_time_created)     { return time_created; }        // returns event creation time 
-    function getTimeStart()         public view onlyManager returns(uint256         event_time_start)       { return time_start; }          // returns event start time 
-    function getTimeEnd()           public view onlyManager returns(uint256         event_time_end)         { return time_end; }            // returns event end time 
-    function getExpirationTime()    public view onlyManager returns(uint256         event_time_expiration)  { return time_expiration; }     // returns event time expiration 
+    function getId()                public view             returns(address         event_id)               { return id; }                  // returns event id
+    function getInitiator()         public view             returns(address         event_initiator)        { return initiator; }           // returns event initiator
+    function getParticipants()      public view             returns(SetStorage.Set  event_participants)     { return participants; }        // returns event participants
+    function getName()              public view             returns(string memory   event_name)             { return name; }                // returns event name 
+    function getDescription()       public view             returns(string memory   event_description)      { return description; }         // returns event description
+    function getLocation()          public view             returns(string memory   event_location)         { return location; }            // returns event location
+    function getTimeCreated()       public view             returns(uint256         event_time_created)     { return time_created; }        // returns event creation time 
+    function getTimeStart()         public view             returns(uint256         event_time_start)       { return time_start; }          // returns event start time 
+    function getTimeEnd()           public view             returns(uint256         event_time_end)         { return time_end; }            // returns event end time 
+    function getExpirationTime()    public view             returns(uint256         event_time_expiration)  { return time_expiration; }     // returns event time expiration 
     
+    function getManager()           public view onlyManager returns(address         event_manager)          { return manager; }             // returns event manager 
     
     // attend this event 
     function participate(address payable participant) public onlyManager
@@ -119,6 +119,12 @@ contract Event {
         
         // add participant address
         participants.addToArray(msg.sender);
+    }
+    
+    // get participants array 
+    function getParticipantsArray() public view returns(address [] memory event_participants) 
+    {
+        return participants.getArray();
     }
     
     // remove participant 
