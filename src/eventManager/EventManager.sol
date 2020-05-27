@@ -176,13 +176,27 @@ contract EventManager {
     }
 
     // get user events
-    // check runtime - this can take very long
     // access: user only 
     function getUserEvents() public view onlyUser returns(EventContract.Event [] memory user_events) 
     {
         // return user event array 
-        return event_storage.getUserEventArray(msg.sender);
+        return event_storage.getUserEventArray(msg.sender, false);
     }
-
+    
+    // get events where user participates 
+    // access: user only 
+    function getUserParticipantEvents() public view onlyUser returns(EventContract.Event [] memory user_participant_events) 
+    {
+        // return user participant event array 
+        return event_storage.getUserEventArray(msg.sender, true);
+    }
+    
+    // participate at an event 
+    // access: user only 
+    function participateEventById(EventContract.Event event_address) public onlyUser 
+    {
+        // participate at an event 
+        event_address.participate(msg.sender);
+    }
     
 }
