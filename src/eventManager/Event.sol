@@ -180,8 +180,15 @@ contract Event {
         time_expiration = time;
     }
     
+    // check if initiator
+    function isInitiator(address payable user) public view returns(bool is_initiator)
+    {
+        // check if address is initiator address
+        return (user == initiator);
+    }
+    
     // check if participant
-    function isParticipant(address payable user) public view onlyManager returns(bool is_participant)
+    function isParticipant(address payable user) public view returns(bool is_participant)
     {
         // check if address is in participants set 
         return participants.inArray(user);
