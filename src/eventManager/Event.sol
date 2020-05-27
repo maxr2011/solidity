@@ -293,11 +293,10 @@ contract Event {
         
         // set new item state
         party_items[party_item_id].checked = !item_state;
-        
     }
     
     // delete party item 
-    function deletePartyitem(address payable user_address, uint256 party_item_id) public onlyManager
+    function deletePartyItem(address payable user_address, uint256 party_item_id) public onlyManager
     {
         // check if user is initiator or holder of the item 
         require((user_address == initiator) || (isItemHolder(party_item_id, user_address)), "User is not allowed to update item info");
@@ -305,7 +304,19 @@ contract Event {
         // check if item exists
         require(itemExists(party_item_id), "Item does not exist");
         
-        // todo implement
+        // delete party item 
+        delete party_items[party_item_id];
+        
+        // fill up with rest of the items
+        for (uint i = party_item_id; i < party_items.length-1; i++){
+            
+            // move next element to current element
+            party_items[i] = party_items[i+1];
+            
+        }
+        
+        // pop last element 
+        party_items.pop();
     }
     
 }
