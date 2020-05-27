@@ -123,6 +123,7 @@ contract EventManager {
         return address(new_event);
     }
     
+    
     // get event count
     // access: admin only 
     function getEventCount() public view onlyAdmin returns(uint256 event_count) 
@@ -139,14 +140,14 @@ contract EventManager {
     
     // get event position 
     // access: user only 
-    function getEventPosition(address event_address) public view onlyUser returns(uint event_position)
+    function getEventPosition(EventContract.Event event_address) public view onlyUser returns(uint event_position)
     {
         return event_storage.getPosition(event_address);
     }
     
     // get event info 
     // access: user only
-    function getEventInfo(address event_address) public view onlyUser
+    function getEventInfo(EventContract.Event event_address) public view onlyUser
     returns(
         address         event_id, 
         address         event_initiator,
@@ -157,14 +158,8 @@ contract EventManager {
         uint256         event_created_time,
         SetStorage.Set  event_participants
     ) {
-        // get event position by address
-        uint event_position = getEventPosition(event_address);
-        
-        // get event by position 
-        EventContract.Event event_info = event_storage.getByPosition(event_position);
-        
         // return event info 
-        return event_info.getInfo();
+        return event_address.getInfo();
     }
     
     // get all events 
@@ -198,5 +193,36 @@ contract EventManager {
         // participate at an event 
         event_address.participate(msg.sender);
     }
+    
+    
+    // propose new event item 
+    // access: user only 
+    function createUserEventItem(EventContract.Event event_address, string memory event_item_name) public onlyUser 
+    {
+        // create a new item 
+        event_address.proposeItemToBringWith(msg.sender, event_item_name); 
+    }
+    
+    // get event item info 
+    // access: user only 
+    function getEventItemInfo(EventContract.Event event_address, uint event_item_id) public view onlyUser 
+    returns (
+        uint256                 item_id, 
+        address     payable     item_holder,
+        string      memory      item_name, 
+        uint256                 item_time_expiration,
+        bool                    item_checked
+    )
+    {
+        return event_address.getItemInfo(event_item_id);
+    }
+    
+    // remove event item 
+    // access: user only 
+    function removeEventItem(EventContract.Event event_address, uint event_item_id) public onlyUser
+    {
+        event_address.deletePartyItem(msg.sender, event_item_id);
+    }
+    
     
 }
