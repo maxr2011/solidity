@@ -24,7 +24,7 @@ contract EventManager {
     
     // CONSTRUCTOR 
     // this is only called once with the final version
-    constructor() public 
+    constructor() public
     {
         // create users and events sets where the addresses are stored 
         user_storage            = new SetStorage.Set();
@@ -34,7 +34,8 @@ contract EventManager {
         event_storage           = new EventStorage.EventSet();
         
         // set admin address
-        admin = 0xad67a760e4Cb77e19F1B7B79d6B4901B5360DEF1;  
+        //admin = 0xad67a760e4Cb77e19F1B7B79d6B4901B5360DEF1;  
+        admin = 0x1Ce6Fc563f0567845734A70C07F3A00c28CDC2c5; // temp address 
         
         // add admin as first user 
         // users.addToArray(admin); // optional 
@@ -192,6 +193,13 @@ contract EventManager {
     {
         // participate at an event 
         event_address.participate(msg.sender);
+    }
+    
+    // get event participants 
+    // access: user only 
+    function getEventParticipants(EventContract.Event event_address) public view onlyUser returns(address [] memory participants_array)
+    {
+        return event_address.getParticipantsArray();
     }
     
     
