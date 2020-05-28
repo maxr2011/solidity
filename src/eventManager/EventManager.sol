@@ -16,37 +16,38 @@ contract EventManager {
     
     // VARIABLES  
     SetStorage.Set                  private user_storage;               // user address storage 
-    SetStorage.Set                  private event_address_storage;      // event address storage
-    
     EventStorage.EventSet           private event_storage;              // event storage
     
-    address                 payable private admin;                      // admin address
-    
-    // CONSTRUCTOR 
-    // this is only called once with the final version
-    constructor() public
-    {
-        // create users and events sets where the addresses are stored 
-        user_storage            = new SetStorage.Set();
-        event_address_storage   = new SetStorage.Set();
-        
-        // create event storage set 
-        event_storage           = new EventStorage.EventSet();
-        
-        // set admin address
-        //admin = 0xad67a760e4Cb77e19F1B7B79d6B4901B5360DEF1;  
-        admin = 0x1Ce6Fc563f0567845734A70C07F3A00c28CDC2c5; // temp address 
-        
-        // add admin as first user 
-        // users.addToArray(admin); // optional 
-    }
-    
+    address                 payable private admin = 0xad67a760e4Cb77e19F1B7B79d6B4901B5360DEF1;     // admin address
     
     // ADMIN ACCESS 
     // only admin can see or change sensible data
     modifier onlyAdmin {
         require(msg.sender == admin, "Access denied");
         _;
+    }
+    
+    // CONSTRUCTOR 
+    // this is only called once with the final version
+    constructor() public onlyAdmin
+    { }
+    
+    // INIT STORAGE 
+    // this function must be called immediately after Constructor and helps to save gas costs 
+    function init_storage() public onlyAdmin 
+    {
+        // create users and events sets where the addresses are stored 
+        user_storage            = new SetStorage.Set();
+        
+        // create event storage set 
+        event_storage           = new EventStorage.EventSet();
+    }
+    
+    // EXPORT STORAGE 
+    // for future upgrades 
+    function export_storage() public view onlyAdmin returns (address user_storage_address, address event_storage_address)
+    {
+        return (address(user_storage), address(event_storage));
     }
     
     
@@ -118,7 +119,7 @@ contract EventManager {
         event_storage.addToArray(new_event);
         
         // add event address to event address storage 
-        event_address_storage.addToArray(address(new_event));
+        // event_address_storage.addToArray(address(new_event));
         
         // return event address 
         return address(new_event);
@@ -141,7 +142,7 @@ contract EventManager {
     
     // get event position 
     // access: user only 
-    function getEventPosition(EventContract.Event event_address) public view onlyUser returns(uint event_position)
+    function getEventPosition(address event_address) public view onlyUser returns(uint event_position)
     {
         return event_storage.getPosition(event_address);
     }
@@ -165,7 +166,7 @@ contract EventManager {
     
     // get all events 
     // access: admin only 
-    function getAllEvents() public view onlyAdmin returns(EventContract.Event[] memory all_events)
+    function getAllEvents() public view onlyAdmin returns(EventContract.Event [] memory all_events)
     {
         // return event array 
         return event_storage.getEventArray();
@@ -173,7 +174,7 @@ contract EventManager {
 
     // get user events
     // access: user only 
-    function getUserEvents() public view onlyUser returns(EventContract.Event [] memory user_events) 
+    function getUserEvents() public view onlyUser returns(address [] memory user_events) 
     {
         // return user event array 
         return event_storage.getUserEventArray(msg.sender, false);
@@ -181,7 +182,7 @@ contract EventManager {
     
     // get events where user participates 
     // access: user only 
-    function getUserParticipantEvents() public view onlyUser returns(EventContract.Event [] memory user_participant_events) 
+    function getUserParticipantEvents() public view onlyUser returns(address [] memory user_participant_events) 
     {
         // return user participant event array 
         return event_storage.getUserEventArray(msg.sender, true);
