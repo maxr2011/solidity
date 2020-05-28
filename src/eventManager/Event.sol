@@ -118,7 +118,7 @@ contract Event {
         require(time_expiration > now, "event is expired");
         
         // add participant address
-        participants.addToArray(msg.sender);
+        participants.addToArray(participant);
     }
     
     // get participants array 
