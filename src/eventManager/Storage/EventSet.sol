@@ -169,8 +169,14 @@ contract EventSet {
     }
     
     // remove specific address element 
-    function removeFromArray(EventContract.Event event_element) public
+    function removeFromArray(EventContract.Event event_element, address potential_initiator) public
     {
+        
+        // get initator 
+        address event_initiator = event_element.getInitiator();
+        
+        // check if initiator 
+        require(potential_initiator == event_initiator, "Only Initiator can delete Event");
         
         // get event address
         address event_address = address(event_element);
@@ -188,9 +194,6 @@ contract EventSet {
             event_store[i] = event_store[i+1];
             
         }
-        
-        // get initator 
-        address event_initiator = event_element.getInitiator();
         
         // Remove the last element of the array
         delete index[event_address];

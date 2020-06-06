@@ -226,6 +226,21 @@ contract EventManager {
         return event_address.getItemInfo(event_item_id);
     }
     
+    // get event item count 
+    // access: user only 
+    function getEventItemCount(EventContract.Event event_address) public view onlyUser 
+    returns (uint item_count) 
+    {
+        return event_address.getItemCount();
+    }
+    
+    // update item state 
+    // access: user only 
+    function updateEventItemState(EventContract.Event event_address, uint item_id) public onlyUser 
+    {
+        event_address.updatePartyItemCheck(msg.sender, item_id);
+    }
+    
     // remove event item 
     // access: user only 
     function removeEventItem(EventContract.Event event_address, uint event_item_id) public onlyUser
@@ -233,5 +248,11 @@ contract EventManager {
         event_address.deletePartyItem(msg.sender, event_item_id);
     }
     
+    // remove event 
+    // access: user only 
+    function removeEvent(EventContract.Event event_address) public onlyUser 
+    {
+        event_storage.removeFromArray(event_address, msg.sender);    
+    }
     
 }
