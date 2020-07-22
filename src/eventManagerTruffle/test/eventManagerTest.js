@@ -6,38 +6,34 @@ contract('eventManager', accounts => {
     let admin = accounts[0];
     before(async () => {
         eventManager = await EventManager.deployed();
+        // register half the accounts.
+        await eventManager.register({from: admin}); 
+        await eventManager.register({from: accounts[1]}); 
+        await eventManager.register({from: accounts[2]}); 
+        await eventManager.register({from: accounts[3]}); 
+        await eventManager.register({from: accounts[4]}); 
     });
     it('should be deployable', async () => {
-        console.log(eventManager.address);
         assert(eventManager.address !== '');
     });
     async function userCount()
     {
         return await eventManager.getUserCount({from: admin});
     }
-    it('should allow registration', async () => {
+    async function getUserById(id)
+    {
+        return await eventManager.getUserById(id, {from:admin})
+    }
+    it('should allow registration of unregistered account', async () => {
         const userCountBefore = await userCount();
-        console.log('Old User-Count: ' + userCountBefore);
 
-        await eventManager.register({from: admin}); // does not return the value.
-        await eventManager.register({from: accounts[1]}); 
-        await eventManager.register({from: accounts[2]}); 
-        await eventManager.register({from: accounts[3]}); 
-        //const id = await eventManager.register.call({ from: admin }); //.call() does not alter the state.
+        await eventManager.register({from: accounts[5]}); 
 
-        const userCountAfter = await userCount();
-        console.log('New User-Count: ' + userCountAfter);
-        assert(userCountAfter - userCountBefore === 4, 'UserCount didn´t increment correctly.' 
-                + userCountBefore + ' -> ' + userCountAfter);
-
-        assert(await eventManager.getUserById(1, {from:admin}) === admin, 'Address of new user not saved.');
-        assert(await eventManager.getUserById(2, {from:admin}) === accounts[1], 'Address of new user not saved.');
-        assert(await eventManager.getUserById(3, {from:admin}) === accounts[2], 'Address of new user not saved.');
-        assert(await eventManager.getUserById(4, {from:admin}) === accounts[3], 'Address of new user not saved.');
+        assert(await userCount() - userCountBefore === 1, 'UserCount didn´t increment.');
+        assert(await getUserById(6) === accounts[5], 'Address of new user not saved.');
     });
     it('should reject double registering', async () => {
         try {
-            await eventManager.register({from: accounts[2]});
             await eventManager.register({from: accounts[2]});
             assert.fail('User was able to register twice.');
         }
@@ -46,11 +42,15 @@ contract('eventManager', accounts => {
         }
         
     });
+    async function createDummyEvent(account)
+    {
+        await eventManager.createUserEvent(name,location,startTime,endTime, {from: account});
+    }
     let startTime = 2595424765, endTime = 3595424765;
     let name = 'Bingo', location = 'Park';
     it('should allow new Events', async () => {
-        await eventManager.createUserEvent(name,location,startTime,endTime, {from: admin});
-        const eventCount = await eventManager.getEventCount({from: admin});
+        await createDummyEvent(admin);
+        const eventCount = await eventCount();
         const eventAddress = await eventManager.getEventById(eventCount, {from: admin});
         console.log('EventAddress: ' + eventAddress);
         assert(eventAddress !== '');
@@ -63,6 +63,15 @@ contract('eventManager', accounts => {
         assert(startTime == info[4], 'Event-Start-Time wasn´t stored.');
         assert(endTime == info[5], 'Event-End-Time wasn´t stored.');
     });
+    async function compareEventInfoWithDummyEvent(eventInfo, eventAddress, account)
+    {
+        assert(eventAddress === eventInfo[0], 'Event-Id wasn´t set to the contract address.');
+        assert(account === eventInfo[1], 'Event-Initiator wasn´t stored.');
+        assert(name === eventInfo[2], 'Event-Name wasn´t stored.');
+        assert(location === eventInfo[3], 'Event-Location wasn´t stored.');
+        assert(startTime == eventInfo[4], 'Event-Start-Time wasn´t stored.');
+        assert(endTime == eventInfo[5], 'Event-End-Time wasn´t stored.');
+    }
     it('should remember events', async () => {
         const allEvents = await eventManager.getAllEvents({from: admin});
         
@@ -76,7 +85,7 @@ contract('eventManager', accounts => {
         const eventCount2 = await eventManager.getEventCount({from: admin});
         assert(allEvents2.length === eventCount2.toNumber(), 'EventCount != Number of Events');
     });
-    it('should show only own events', async () => {
+    it('should only show own events', async () => {
         const events0 = await eventManager.getUserEvents({from: admin});
         const events1 = await eventManager.getUserEvents({from: accounts[1]});
         const events2 = await eventManager.getUserEvents({from: accounts[2]});
