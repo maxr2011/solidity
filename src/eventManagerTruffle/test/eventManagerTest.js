@@ -1,9 +1,12 @@
+const { assert } = require("console");
+
 const EventManager = artifacts.require('EventManager');
 const Event = artifacts.require('Event');
 
 contract('eventManager', accounts => {
     let eventManager = null;
     let admin = accounts[0];
+    let userEvents = [0,0,0,0,0];
     before(async () => {
         eventManager = await EventManager.deployed();
         // register half the accounts.
@@ -16,20 +19,12 @@ contract('eventManager', accounts => {
     it('should be deployable', async () => {
         assert(eventManager.address !== '');
     });
-    async function userCount()
-    {
-        return await eventManager.getUserCount({from: admin});
-    }
-    async function getUserById(id)
-    {
-        return await eventManager.getUserById(id, {from:admin})
-    }
     it('should allow registration of unregistered account', async () => {
         const userCountBefore = await userCount();
 
         await eventManager.register({from: accounts[5]}); 
 
-        assert(await userCount() - userCountBefore === 1, 'UserCount didn´t increment.');
+        assert((await userCount() - userCountBefore) === 1, 'UserCount didn´t increment.');
         assert(await getUserById(6) === accounts[5], 'Address of new user not saved.');
     });
     it('should reject double registering', async () => {
@@ -42,28 +37,40 @@ contract('eventManager', accounts => {
         }
         
     });
-    async function createDummyEvent(account)
-    {
-        await eventManager.createUserEvent(name,location,startTime,endTime, {from: account});
-    }
-    let startTime = 2595424765, endTime = 3595424765;
-    let name = 'Bingo', location = 'Park';
     it('should allow new Events', async () => {
         await createDummyEvent(admin);
-        const eventCount = await eventCount();
-        const eventAddress = await eventManager.getEventById(eventCount, {from: admin});
-        console.log('EventAddress: ' + eventAddress);
-        assert(eventAddress !== '');
+        const eventAddress = await eventManager.getEventById(await getEventCount(), {from: admin});
+        assert(eventAddress !== '', 'Event Address is null.');
         const event = await Event.at(eventAddress);
         const info = await event.getInfo();
-        assert(eventAddress === info[0], 'Event-Id wasn´t set to the contract address.');
-        assert(admin === info[1], 'Event-Initiator wasn´t stored.');
-        assert(name === info[2], 'Event-Name wasn´t stored.');
-        assert(location === info[3], 'Event-Location wasn´t stored.');
-        assert(startTime == info[4], 'Event-Start-Time wasn´t stored.');
-        assert(endTime == info[5], 'Event-End-Time wasn´t stored.');
+        compareEventInfoWithDummy(info, eventAddress, admin);
     });
-    async function compareEventInfoWithDummyEvent(eventInfo, eventAddress, account)
+    it('should save events and increment eventCounter', async () => {
+        let count = 0;
+        for(i = 0; i < 3; i++){
+            await createDummyEvent(accounts[1]);
+
+            const allEvents = await getAllEvents();
+            
+            const eventCount = (await getEventCount()).toNumber();
+
+            assert(allEvents.length === eventCount, 'EventCount != Number of Events');
+
+            assert(count < eventCount, 'Didn´t increment eventCounter');
+
+            count = eventCount;
+        }
+    });
+    it('should only show own events', async () => {
+        for(i = 0; i < 5; i++){ // only registered accounts.
+            const events = await eventManager.getUserEvents({from: accounts[i]});
+            assert(events.length === userEvents[i], 'userEventCount does not match the number of created events.');
+        }
+    });
+    async function getEventCount (account = admin){
+        return await eventManager.getEventCount({from: account});
+    }
+    function compareEventInfoWithDummy(eventInfo, eventAddress, account)
     {
         assert(eventAddress === eventInfo[0], 'Event-Id wasn´t set to the contract address.');
         assert(account === eventInfo[1], 'Event-Initiator wasn´t stored.');
@@ -72,31 +79,22 @@ contract('eventManager', accounts => {
         assert(startTime == eventInfo[4], 'Event-Start-Time wasn´t stored.');
         assert(endTime == eventInfo[5], 'Event-End-Time wasn´t stored.');
     }
-    it('should remember events', async () => {
-        const allEvents = await eventManager.getAllEvents({from: admin});
-        
-        const eventCount = await eventManager.getEventCount({from: admin});
-        assert(allEvents.length === eventCount.toNumber(), 'EventCount != Number of Events');
-
-        await eventManager.createUserEvent(name + '2',location + '2',startTime,endTime, {from: admin});
-        
-        const allEvents2 = await eventManager.getAllEvents({from: admin});
-
-        const eventCount2 = await eventManager.getEventCount({from: admin});
-        assert(allEvents2.length === eventCount2.toNumber(), 'EventCount != Number of Events');
-    });
-    it('should only show own events', async () => {
-        const events0 = await eventManager.getUserEvents({from: admin});
-        const events1 = await eventManager.getUserEvents({from: accounts[1]});
-        const events2 = await eventManager.getUserEvents({from: accounts[2]});
-        const events3 = await eventManager.getUserEvents({from: accounts[3]});
-        assert(events0.length === 2, 'showUserEvents does not work properly');
-        assert(events1.length === 0, 'showUserEvents does not work properly');
-        assert(events2.length === 0, 'showUserEvents does not work properly');
-        assert(events3.length === 0, 'showUserEvents does not work properly');
-    });
-    async function eventCount (account = admin){
-        const eventCount = await eventManager.getEventCount({from: account});
-        console.log("count = " + eventCount);
+    async function getAllEvents(){
+        return await eventManager.getAllEvents({from: admin});
+    }
+    let startTime = 2595424765, endTime = 3595424765;
+    let name = 'Bingo', location = 'Park';
+    async function createDummyEvent(account)
+    {
+        userEvents[accounts.indexOf(account)]++;
+        await eventManager.createUserEvent(name,location,startTime,endTime, {from: account});
+    }
+    async function userCount()
+    {
+        return await eventManager.getUserCount({from: admin});
+    }
+    async function getUserById(id)
+    {
+        return await eventManager.getUserById(id, {from:admin})
     }
 });
