@@ -6,7 +6,7 @@ contract('eventManager', accounts => {
     let eventManager = null;
     before(async () => {
         eventManager = await EventManager.deployed();
-        eventManager.init_storage();
+        //eventManager.init_storage(); not needed anymore.
     });
     it('should be deployable', async () => {
         console.log(eventManager.address);
@@ -22,6 +22,9 @@ contract('eventManager', accounts => {
         const userCountAfter = await eventManager.getUserCount({from: accounts[0]});
         console.log('New User-Count: ' + userCountAfter);
         assert(userCountAfter - userCountBefore === 1);
+
+        const newMember = await eventManager.getUserById(userCountAfter);
+        assert(newMember === accounts[0]);
     });
     it('should reject double registering', async () => {
         try {
