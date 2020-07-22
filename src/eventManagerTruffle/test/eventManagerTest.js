@@ -1,3 +1,5 @@
+const { assert } = require("console");
+
 const EventManager = artifacts.require('EventManager');
 const Event = artifacts.require('Event');
 
@@ -16,14 +18,19 @@ contract('eventManager', accounts => {
         console.log('Old User-Count: ' + userCountBefore);
 
         await eventManager.register({from: accounts[0]}); // does not return the value.
+        await eventManager.register({from: accounts[1]}); 
+        await eventManager.register({from: accounts[2]}); 
+        await eventManager.register({from: accounts[3]}); 
         //const id = await eventManager.register.call({ from: accounts[0] }); //.call() does not alter the state.
 
         const userCountAfter = await eventManager.getUserCount({from: accounts[0]});
         console.log('New User-Count: ' + userCountAfter);
-        assert(userCountAfter > userCountBefore, 'UserCount didn´t increment.');
+        assert(userCountAfter - userCountBefore === 4, 'UserCount didn´t increment correctly.');
 
-        const newMember = await eventManager.getUserById(userCountAfter);
-        assert(newMember === accounts[0], 'Address of new user not saved.');
+        assert(await eventManager.getUserById(1, {from:accounts[0]}) === accounts[0], 'Address of new user not saved.');
+        assert(await eventManager.getUserById(2, {from:accounts[0]}) === accounts[1], 'Address of new user not saved.');
+        assert(await eventManager.getUserById(3, {from:accounts[0]}) === accounts[2], 'Address of new user not saved.');
+        assert(await eventManager.getUserById(4, {from:accounts[0]}) === accounts[3], 'Address of new user not saved.');
     });
     it('should reject double registering', async () => {
         try {
@@ -65,6 +72,16 @@ contract('eventManager', accounts => {
 
         const eventCount2 = await eventManager.getEventCount({from: accounts[0]});
         assert(allEvents2.length === eventCount2.toNumber(), 'EventCount != Number of Events');
+    });
+    it('should show only own events', async () => {
+        const events0 = await eventManager.getUserEvents({from: accounts[0]});
+        const events1 = await eventManager.getUserEvents({from: accounts[1]});
+        const events2 = await eventManager.getUserEvents({from: accounts[2]});
+        const events3 = await eventManager.getUserEvents({from: accounts[3]});
+        assert(events0.length === 2, 'showUserEvents does not work properly');
+        assert(events1.length === 0, 'showUserEvents does not work properly');
+        assert(events2.length === 0, 'showUserEvents does not work properly');
+        assert(events3.length === 0, 'showUserEvents does not work properly');
     });
 
 });
