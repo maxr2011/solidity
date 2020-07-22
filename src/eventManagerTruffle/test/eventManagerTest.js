@@ -81,16 +81,23 @@ contract('event', accounts => {
         assert(eventAddress !== '', 'Event Address is null.');
         event = await Event.at(eventAddress);
     });
-    it('shouldn´t accept initiator as participant.', async () => {
+    it('shouldn´t accept initiator as participant', async () => {
         
         try {
-            await eventManager.participateEventById(event, {from: initiator});
+            await eventManager.participateEventById(event.address, {from: initiator});
             assert.fail('Initiator was able to participate at his own event.');
         }
         catch (err) {
-            assert(err.message.includes('you are already the initiator'),'Error message did not include revert-messages: ');
+            assert(err.message.includes('you are already the initiator'),'Error message did not include require-messages.');
         }     
-    })
+    });
+    it('should allow other parcipitants to join', async () => {
+        for(i = 2; i < accounts.length; i++){
+            await eventManager.participateEventById(event.address, {from: accounts[i]});
+            const participants = await eventManager.getEventParticipants(event.address);
+            assert(participants.length === i - 1, "Somebody couldn´t participate");
+        }
+    });
 });
 
 
