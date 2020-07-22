@@ -40,7 +40,7 @@ contract EventManager {
         event_storage = EventStorage.EventSet(eventSet);
     }
 
-    /*    
+    /*
     // INIT STORAGE
     // this function must be called immediately after Constructor and helps to save gas costs
     function init_storage() public onlyAdmin
