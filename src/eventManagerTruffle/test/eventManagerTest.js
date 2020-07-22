@@ -14,6 +14,7 @@ contract('eventManager', accounts => {
     });
     it('should allow registration', async () => {
         const userCountBefore = await eventManager.getUserCount({from: accounts[0]});
+        console.log('Old User-Count: ' + userCountBefore);
 
         await eventManager.register({from: accounts[0]}); // does not return the value.
         //const id = await eventManager.register.call({ from: accounts[0] }); //.call() does not alter the state.
