@@ -1,0 +1,1 @@
+ganache-cli -d 100000000 --allowUnlimitedContractSize --port 7545 -l 250000000 -m "twice spirit vault drip width picnic unlock high disorder jeans pill echo" 
