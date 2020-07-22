@@ -95,8 +95,20 @@ contract('event', accounts => {
         for(i = 2; i < accounts.length; i++){
             await eventManager.participateEventById(event.address, {from: accounts[i]});
             const participants = await eventManager.getEventParticipants(event.address);
-            assert(participants.length === i - 1, "Somebody couldn´t participate");
+            assert(participants.includes(accounts[i]), accounts[i] + ' couldn´t participate');
         }
+    });
+    it('should exist a partyitem', async () => {
+        await eventManager.createUserEventItem(event.address, 'Kuchen', {from: initiator});
+
+        const itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[2]});
+
+        const item = await eventManager.getEventItemInfo(event.address, itemCount - 1, {from: accounts[2]});
+
+        //console.log(item);
+        assert(item[2] === 'Kuchen', 'Der Kuchen fehlt');
+        assert(item[4] === false, 'New Items must not be checked');
+        //todo check for expiration and id?
     });
 });
 
