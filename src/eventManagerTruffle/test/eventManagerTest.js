@@ -51,8 +51,20 @@ contract('eventManager', accounts => {
         assert(name === info[2], 'Event-Name wasn´t stored.');
         assert(location === info[3], 'Event-Location wasn´t stored.');
         assert(startTime == info[4], 'Event-Start-Time wasn´t stored.');
-        console.log('startTime: ' + startTime + ', info[4]: ' + info[4]);
         assert(endTime == info[5], 'Event-End-Time wasn´t stored.');
+    });
+    it('should remember events', async () => {
+        const allEvents = await eventManager.getAllEvents({from: accounts[0]});
+        
+        const eventCount = await eventManager.getEventCount({from: accounts[0]});
+        assert(allEvents.length === eventCount.toNumber(), 'EventCount != Number of Events');
+
+        await eventManager.createUserEvent(name + '2',location + '2',startTime,endTime, {from: accounts[0]});
+        
+        const allEvents2 = await eventManager.getAllEvents({from: accounts[0]});
+
+        const eventCount2 = await eventManager.getEventCount({from: accounts[0]});
+        assert(allEvents2.length === eventCount2.toNumber(), 'EventCount != Number of Events');
     });
 
 });
