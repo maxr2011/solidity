@@ -18,6 +18,6 @@ module.exports = (deployer, network, accounts) => {
     deployer.deploy(StorageEventSet);
     deployer.link(StorageEventSet, EventManager);
 
-    //deployer.deploy(EventManager);
+    //deployer.deploy(EventManager, StorageSet.address, StorageEventSet.address);
 
 }

@@ -31,12 +31,16 @@ contract EventManager {
 
     // CONSTRUCTOR
     // this is only called once with the final version
-    constructor() public onlyAdmin
+    constructor(address set, address eventSet) public onlyAdmin
     {
+        // create users and events sets where the addresses are stored
+        user_storage = SetStorage.Set(set);
 
+        // create event storage set
+        event_storage = EventStorage.EventSet(eventSet);
     }
 
-
+    /*    
     // INIT STORAGE
     // this function must be called immediately after Constructor and helps to save gas costs
     function init_storage() public onlyAdmin
@@ -47,7 +51,7 @@ contract EventManager {
         // create event storage set
         event_storage = new EventStorage.EventSet();
     }
-
+    */
 
     // EXPORT STORAGE
     // for future upgrades
