@@ -1,13 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Drizzle from 'drizzle';
+import { Drizzle, generateStore } from "drizzle";
 import './index.css';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
 
+import drizzleOptions from './drizzleOptions.js';
+
+const drizzleStore = generateStore(drizzleOptions);
+const drizzle = new Drizzle(drizzleOptions, drizzleStore);
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App drizzle={drizzle}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
@@ -16,3 +21,4 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
