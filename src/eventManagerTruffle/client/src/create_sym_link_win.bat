@@ -1,0 +1,1 @@
+mklink /J "<REPO_PATH>\solidity\src\eventManagerTruffle\client\src\contracts" "<REPO_PATH>\solidity\src\eventManagerTruffle\build\contracts"
