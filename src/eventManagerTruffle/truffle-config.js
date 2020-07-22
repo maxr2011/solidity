@@ -18,6 +18,9 @@
  *
  */
 
+var HDWalletProvider = require('@truffle/hdwallet-provider');
+var mnemonic = "twice spirit vault drip width picnic unlock high disorder jeans pill echo";
+
 // const HDWalletProvider = require('@truffle/hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
@@ -46,6 +49,7 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
+      gas: 25000000
     },
     test: {
       host: "127.0.0.1",     // Localhost (default: none)
@@ -56,6 +60,15 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
+    },
+    rinkeby: {
+      provider: () => { 
+       return new HDWalletProvider(mnemonic, "https://mainnet.infura.io/v3/75036bcc89624ebfa0d2984c1efc0bd0", 0, 5);
+      },
+      from: '0x367E7e251F63eeccD9Af88121A2C7D9F3cD5168c',
+      network_id: '*',
+      gas: 6500000,
+      gasPrice: 10000000000,
     }
 
     // Another network with more advanced options...
@@ -100,7 +113,7 @@ module.exports = {
        settings: {          // See the solidity docs for advice about optimization and evmVersion
         optimizer: {
           enabled: true,
-          runs: 50
+          runs: 2000
         },
         evmVersion: "byzantium"
       }

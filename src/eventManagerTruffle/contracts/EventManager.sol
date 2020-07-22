@@ -18,8 +18,9 @@ contract EventManager {
     SetStorage.Set                  private user_storage;               // user address storage 
     EventStorage.EventSet           private event_storage;              // event storage
     
-    address                 payable private admin = 0xad67a760e4Cb77e19F1B7B79d6B4901B5360DEF1;     // admin address
-    
+    // address                 payable private admin = 0xad67a760e4Cb77e19F1B7B79d6B4901B5360DEF1;     // admin address (rinkeby)
+    address                 payable private admin = 0x367E7e251F63eeccD9Af88121A2C7D9F3cD5168c; // new admin address (ganache)
+
     // ADMIN ACCESS 
     // only admin can see or change sensible data
     modifier onlyAdmin {
@@ -32,6 +33,7 @@ contract EventManager {
     constructor() public onlyAdmin
     { }
     
+    
     // INIT STORAGE 
     // this function must be called immediately after Constructor and helps to save gas costs 
     function init_storage() public onlyAdmin 
@@ -43,13 +45,14 @@ contract EventManager {
         event_storage           = new EventStorage.EventSet();
     }
     
+    /*
     // EXPORT STORAGE 
     // for future upgrades 
     function export_storage() public view onlyAdmin returns (address user_storage_address, address event_storage_address)
     {
         return (address(user_storage), address(event_storage));
     }
-    
+    */
     
     // USER MANAGEMENT 
     
