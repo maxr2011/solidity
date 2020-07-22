@@ -1,5 +1,3 @@
-const { assert } = require("console");
-
 const EventManager = artifacts.require('EventManager');
 const Event = artifacts.require('Event');
 
@@ -38,16 +36,23 @@ contract('eventManager', accounts => {
         }
         
     });
+    let startTime = 2595424765, endTime = 3595424765;
+    let name = 'Bingo', location = 'Park';
     it('should allow new Events', async () => {
-        await eventManager.createUserEvent('Bingo','Park',2595424765,3595424765, {from: accounts[0]});
+        await eventManager.createUserEvent(name,location,startTime,endTime, {from: accounts[0]});
         const eventCount = await eventManager.getEventCount({from: accounts[0]});
         const eventAddress = await eventManager.getEventById(eventCount, {from: accounts[0]});
         console.log('EventAddress: ' + eventAddress);
         assert(eventAddress !== '');
         const event = await Event.at(eventAddress);
         const info = await event.getInfo();
-        assert('Bingo' === info[2], 'Event-Name wasn´t stored.');
-        assert('Park' === info[3], 'Event-Location wasn´t stored.');
+        assert(eventAddress === info[0], 'Event-Id wasn´t set to the contract address.');
+        assert(accounts[0] === info[1], 'Event-Initiator wasn´t stored.');
+        assert(name === info[2], 'Event-Name wasn´t stored.');
+        assert(location === info[3], 'Event-Location wasn´t stored.');
+        assert(startTime == info[4], 'Event-Start-Time wasn´t stored.');
+        console.log('startTime: ' + startTime + ', info[4]: ' + info[4]);
+        assert(endTime == info[5], 'Event-End-Time wasn´t stored.');
     });
 
 });
