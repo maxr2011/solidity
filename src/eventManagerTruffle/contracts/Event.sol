@@ -101,7 +101,7 @@ contract Event {
     function getParticipants() public view returns(SetStorage.Set event_participants) { return participants;}   // returns event participants
     function getName() public view returns(string memory event_name) { return name;}                            // returns event name
     function getDescription() public view returns(string memory event_description) { return description;}       // returns event description
-    function getLocation() public view returns(string memory event_location) { return location;}                // returns event locatio
+    function getLocation() public view returns(string memory event_location) { return location;}                // returns event location
     function getTimeCreated() public view returns(uint256 event_time_created) { return time_created;}           // returns event creation time
     function getTimeStart() public view returns(uint256 event_time_start) { return time_start;}                 // returns event start time
     function getTimeEnd() public view returns(uint256 event_time_end) { return time_end;}                       // returns event end time
