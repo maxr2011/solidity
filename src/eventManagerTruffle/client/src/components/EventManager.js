@@ -7,6 +7,7 @@ import Register from './Register';
 import EventInfo from './EventInfo';
 import CreateEvent from './CreateEvent';
 import GetUserEvents from './GetUserEvents';
+import GetParticipantEvents from './GetParticipantEvents';
 
 //import ItemList from './ItemList';
 
@@ -132,9 +133,7 @@ class EventManager extends React.Component {
 
                 <h2>Teilnehmende Events</h2>
 
-                <br />
-
-                <h2>An einem Event teilnehmen</h2>
+                <GetParticipantEvents drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
 
                 <br />
 

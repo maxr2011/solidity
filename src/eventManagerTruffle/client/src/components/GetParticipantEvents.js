@@ -1,7 +1,7 @@
 import React from "react";
 
-class GetUserEvents extends React.Component {
-    state = { loginStatus: null, userEvents: null, drizzleState: null, drizzle: null };
+class GetParticipantEvents extends React.Component {
+    state = { loginStatus: null, participantEvents: null, drizzleState: null, drizzle: null };
 
     componentDidMount() {
 
@@ -17,10 +17,10 @@ class GetUserEvents extends React.Component {
             contract.methods.login().call().then(loginStatus => {
                 
                 if(loginStatus) {
-                    contract.methods.getUserEvents().call().then(userEvents => {
-                        this.setState({ userEvents });
-                        console.log("user events");
-                        console.log(userEvents);
+                    contract.methods.getUserParticipantEvents().call().then(participantEvents => {
+                        this.setState({ participantEvents });
+                        console.log("participant events");
+                        console.log(participantEvents);
                     });
                 }
                 this.setState({ loginStatus });
@@ -33,22 +33,22 @@ class GetUserEvents extends React.Component {
 
     render() {
 
-        var user_events = this.state.userEvents;
+        var participant_events = this.state.participantEvents;
         var login_status = this.state.loginStatus;
 
-        if(user_events !== undefined && user_events != null) {
+        if(participant_events !== undefined && participant_events != null) {
 
-            if(user_events.length > 0) {
+            if(participant_events.length > 0) {
 
                 var user_events_div;
 
                 user_events_div = "";
 
-                for(var i = 0; i < user_events.length; i++) {
+                for(var i = 0; i < participant_events.length; i++) {
 
                     user_events_div += (i+1) + '. Event, Adresse: ';
 
-                    var event_address = user_events[i];
+                    var event_address = participant_events[i];
                     
                     user_events_div += event_address;
 
@@ -56,7 +56,7 @@ class GetUserEvents extends React.Component {
 
                 }
 
-                return (<div id="user_events"> 
+                return (<div id="participant_events"> 
                 
                 {user_events_div}
                 
@@ -79,7 +79,7 @@ class GetUserEvents extends React.Component {
                 );
             } else {
                 return (
-                    <p><i>Logge dich ein, um deine Events zu sehen.</i></p>
+                    <p><i>Logge dich ein, um teilnehmende Events zu sehen.</i></p>
                 );
             }
 
@@ -89,4 +89,4 @@ class GetUserEvents extends React.Component {
 
 }
 
-export default GetUserEvents
+export default GetParticipantEvents
