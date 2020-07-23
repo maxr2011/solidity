@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
+import Moment from 'react-moment';
 
 export class Item extends Component {
     getStyle = () => {
@@ -15,7 +16,7 @@ export class Item extends Component {
                     <input type="checkbox" onChange={this.props.toggleItem.bind(this, id)} defaultChecked={this.props.item.checked}/>{' '}
                     {title + '. '}
                     {'Creator: ' + creator + '. '}
-                    {'Expires: ' + expiration + '.  '}
+                    {'Expires: '} <Moment unix>{expiration}</Moment> {'.  '}
                     <button onClick={this.props.delItem} style={btnStyle}>x</button>
                 </p>
             </div>
