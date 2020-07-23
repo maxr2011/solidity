@@ -70,13 +70,13 @@ class EventInfo extends React.Component {
                 
                 <div id="event_info"></div>
                 <form>
-                    <input type="text" name="event_info_address" id="event_info_address"></input> <br />
+                    <label for="event_info_address" id="input_label">Adresse:</label> <input type="text" name="event_info_address" id="event_info_address"></input> <br />
                 </form>
                 <table id="event_info_buttons">
                     <tbody>
                     <tr>
-                        <td valign="top"><button onClick={this.eventInfo}>Info anzeigen</button></td>
-                        <td valign="top"><button onClick={this.eventParticipate}>Teilnehmen</button></td>
+                        <td valign="top"><button id="event_info_button" onClick={this.eventInfo}>Info anzeigen</button></td>
+                        <td valign="top"><button id="event_participate_button" onClick={this.eventParticipate}>Teilnehmen</button></td>
                     </tr>
                     </tbody>
                 </table>

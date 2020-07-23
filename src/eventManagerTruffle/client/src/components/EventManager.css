@@ -13,6 +13,61 @@
 }
 
 #event_info_buttons {
-    width: 200px;
+    width: 300px;
     margin: 0px auto;
 }
+
+#input_label {
+    display: inline-block;
+    text-align: left;
+    font-size: 14pt;
+    width: 150px;
+}
+
+input[TYPE="text"], input[TYPE="passwd"], textarea, select {
+    width: 400px;
+    border: 1px #606070 solid;
+    padding: 5px;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    outline: none;
+  }
+  
+input[TYPE="text"]:focus, input[TYPE="passwd"]:focus, textarea:focus, select:focus {
+    border: 1px #000000 solid;
+    outline: none;
+  }
+
+input[TYPE="button"], button {
+    background: #C0C0C0;
+    border: none;
+    padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 11pt;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  
+  input[TYPE="button"]:hover, button:hover {
+    background: #707070;
+    outline: none;
+    color: #E1E1E1;
+  }
+  
+  input[TYPE="button"]:focus, input[TYPE="button"]:active, button:focus, button:active {
+    outline: none;
+  }
+  
+  #create_event, #register_button, #event_participate_button {
+    background: #84D773;  
+    background-color: #84D773;
+  }
+
+  #create_event:hover, #register_button:hover, #event_participate_button:hover {
+      background: #3E8D2E;
+      background-color: #3E8D2E;
+  }

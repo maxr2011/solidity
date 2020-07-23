@@ -50,10 +50,10 @@ class CreateEvent extends React.Component {
 
             <form id="event_create_form" name="event_create_form">
 
-                Name: <input type="text" name="event_create_name" id="event_create_name" /> <br />
-                Ort: <input type="text" name="event_create_location" id="event_create_location" /> <br />
-                Startdatum: <input type="text" name="event_create_start_date" id="event_create_start_date" /> <br />
-                Enddatum: <input type="text" name="event_create_end_date" id="event_create_end_date" /> <br />
+                <label for="event_create_name" id="input_label">Name:</label> <input type="text" name="event_create_name" id="event_create_name" /> <br />
+                <label for="event_create_location" id="input_label">Ort:</label> <input type="text" name="event_create_location" id="event_create_location" /> <br />
+                <label for="event_create_start_date" id="input_label">Startdatum:</label> <input type="text" name="event_create_start_date" id="event_create_start_date" /> <br />
+                <label for="event_create_end_date" id="input_label">Enddatum:</label> <input type="text" name="event_create_end_date" id="event_create_end_date" /> <br />
 
                 <button type="button" id="create_event" onClick={this.createEvent}>Event erstellen</button>
             
