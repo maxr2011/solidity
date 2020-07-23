@@ -72,13 +72,13 @@ class EventInfo extends React.Component {
                 <form>
                     <input type="text" name="event_info_address" id="event_info_address"></input> <br />
                 </form>
-                <table>
+                <table id="event_info_buttons">
+                    <tbody>
                     <tr>
                         <td valign="top"><button onClick={this.eventInfo}>Info anzeigen</button></td>
-                    </tr>
-                    <tr>
                         <td valign="top"><button onClick={this.eventParticipate}>Teilnehmen</button></td>
                     </tr>
+                    </tbody>
                 </table>
 
             </div>
