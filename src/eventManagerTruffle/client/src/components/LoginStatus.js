@@ -41,11 +41,10 @@ class LoginStatus extends React.Component {
         const ContractState = this.props.drizzleState.contracts;
 
         var login_status = this.state.loginStatus;
-        console.log(login_status);
 
         if(login_status !== undefined && login_status != null) {
 
-            var login_status_text;
+            var login_status_text = "Wird geladen...";
             if(login_status) {
                 login_status_text = "Eingeloggt";
             } else {
@@ -62,7 +61,7 @@ class LoginStatus extends React.Component {
 
             return (
                 <div id="login_status">
-                    <p> login status: loading</p>
+                    <p> Status: Wird geladen...</p>
                 </div> 
             );
 

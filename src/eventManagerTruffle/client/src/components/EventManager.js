@@ -5,6 +5,7 @@ import CreateEvent from './CreateEvent';
 import ItemList from './ItemList';
 
 import './EventManager.css';
+import Register from './Register';
 
 
 class EventManager extends React.Component {
@@ -83,7 +84,8 @@ class EventManager extends React.Component {
                     <tbody>
                     <tr>
                         <td valign="top"><button id="login_button" onClick={this.login}>Login</button></td>
-                        <td valign="top"><button id="register_button" onClick={this.register}>Register</button></td>
+                        <Register drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
+                            />
                     </tr>
                     </tbody>
                 </table>
