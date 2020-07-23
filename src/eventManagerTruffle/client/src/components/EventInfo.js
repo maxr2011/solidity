@@ -44,15 +44,43 @@ class EventInfo extends React.Component {
 
     }
 
+    eventParticipate = () => {
+
+        console.log('participating at event ...');
+
+        var drizzle = this.state.drizzle;
+
+        var event_participate_address = document.getElementById('event_info_address').value;
+
+        var state = drizzle.store.getState();
+
+        if(state.drizzleStatus.initialized) {
+
+            const contract = this.state.drizzle.contracts.EventManager;
+            contract.methods.participateEventById(event_participate_address).send();
+
+        }
+
+    }
+
     render() {
 
         return(
             <div id="event_info_div">
+                
                 <div id="event_info"></div>
                 <form>
                     <input type="text" name="event_info_address" id="event_info_address"></input> <br />
                 </form>
-                <button onClick={this.eventInfo}>Info anzeigen</button>
+                <table>
+                    <tr>
+                        <td valign="top"><button onClick={this.eventInfo}>Info anzeigen</button></td>
+                    </tr>
+                    <tr>
+                        <td valign="top"><button onClick={this.eventParticipate}>Teilnehmen</button></td>
+                    </tr>
+                </table>
+
             </div>
         );
 

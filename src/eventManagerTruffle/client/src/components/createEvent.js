@@ -55,7 +55,7 @@ class CreateEvent extends React.Component {
                 Startdatum: <input type="text" name="event_create_start_date" id="event_create_start_date" /> <br />
                 Enddatum: <input type="text" name="event_create_end_date" id="event_create_end_date" /> <br />
 
-                <button type="button" id="create_event" onClick={this.createEvent}>Create Event</button>
+                <button type="button" id="create_event" onClick={this.createEvent}>Event erstellen</button>
             
             </form>
             
