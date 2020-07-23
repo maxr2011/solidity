@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Drizzle, generateStore } from "drizzle";
+//import jQuery from "./jquery-3.5.1.min.js";
 import './index.css';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
