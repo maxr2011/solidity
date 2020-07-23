@@ -14,7 +14,6 @@ class GetUserEvents extends React.Component {
         
             this.setState({ loading: false, drizzleState , drizzle });
 
-            // Für das dynamische Laden des Dropdownmenues 
             contract.methods.getUserEvents().call().then(userEvents => {
               this.setState({ userEvents });
               console.log("user events");

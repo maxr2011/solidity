@@ -14,7 +14,6 @@ class LoginStatus extends React.Component {
         
             this.setState({ loading: false, drizzleState , drizzle });
 
-            // Für das dynamische Laden des Dropdownmenues 
             contract.methods.login().call().then(loginStatus => {
               this.setState({ loginStatus });
               console.log("logged in: " + loginStatus);

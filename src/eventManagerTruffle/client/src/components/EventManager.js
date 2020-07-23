@@ -4,6 +4,7 @@ import LoginStatus from './LoginStatus';
 import Login from './Login';
 import Register from './Register';
 
+import EventInfo from './EventInfo';
 import CreateEvent from './CreateEvent';
 import GetUserEvents from './GetUserEvents';
 
@@ -117,9 +118,25 @@ class EventManager extends React.Component {
 
                 <br />
 
+                <h2>Event Info</h2>
+
+                <EventInfo drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
+
+                <br />
+
                 <h2>Meine Events</h2>
 
                 <GetUserEvents drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
+
+                <br />
+
+                <h2>Teilnehmende Events</h2>
+
+                <br />
+
+                <h2>An einem Event teilnehmen</h2>
+
+                <br />
 
                 <br />
             </div>
