@@ -1,12 +1,12 @@
 import React from 'react';
 
 import LoginStatus from './LoginStatus';
-import CreateEvent from './CreateEvent';
+import CreateEvent from './createEvent';
 import ItemList from './ItemList';
 
 import './EventManager.css';
 import Register from './Register';
-
+import AddEvent from './AddEvent';
 
 class EventManager extends React.Component {
     state = { loading: true, drizzleState: null };
@@ -107,7 +107,7 @@ class EventManager extends React.Component {
                 />
 
 
-                <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
+                <ItemList items={this.state.items} toggleItem={this.toggleItem} delItem={this.delItem}/>
 
                 <br />
             </div>
