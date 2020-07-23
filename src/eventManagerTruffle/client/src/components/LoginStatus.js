@@ -37,19 +37,11 @@ class LoginStatus extends React.Component {
                 login_status_text = "Nicht Eingeloggt";
             }
 
-            return (
-                <div id="login_status">
-                    <p> Status: {login_status_text}</p>
-                </div> 
-            );
+            return (<p> Status: {login_status_text}</p>);
 
         } else {
 
-            return (
-                <div id="login_status">
-                    <p> Status: Wird geladen...</p>
-                </div> 
-            );
+            return (<p> Status: Wird geladen...</p>);
 
         }
 

@@ -1,12 +1,15 @@
 import React from 'react';
 
+import LoginStatus from './LoginStatus';
 import Login from './Login';
+import Register from './Register';
+
 import CreateEvent from './CreateEvent';
-import ItemList from './ItemList';
+import GetUserEvents from './GetUserEvents';
+
+//import ItemList from './ItemList';
 
 import './EventManager.css';
-import Register from './Register';
-import LoginStatus from './LoginStatus';
 
 
 class EventManager extends React.Component {
@@ -89,12 +92,13 @@ class EventManager extends React.Component {
         return (
             <div id="eventManager">
             <div id="eventManagerSection">
-                <h2>EventManager</h2>
+                <h2>Login Status</h2>
 
                 <div id="login_status">
                     <LoginStatus drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
                 </div>
                 
+                <center>
                 <table>
                     <tbody>
                     <tr>
@@ -103,13 +107,19 @@ class EventManager extends React.Component {
                     </tr>
                     </tbody>
                 </table>
+                </center>
 
                 <br />
+
                 <h2>Erstellung eines neuen Events</h2>
 
                 <CreateEvent drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
 
-                <ItemList items={this.state.items} toggleItem={this.toggleItem} />
+                <br />
+
+                <h2>Meine Events</h2>
+
+                <GetUserEvents drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
 
                 <br />
             </div>
