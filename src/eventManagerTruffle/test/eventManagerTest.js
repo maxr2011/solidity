@@ -82,17 +82,16 @@ contract('event', accounts => {
         event = await Event.at(eventAddress);
     });
     it('shouldn´t accept initiator as participant', async () => {
-        
         try {
             await eventManager.participateEventById(event.address, {from: initiator});
             assert.fail('Initiator was able to participate at his own event.');
         }
         catch (err) {
-            assert(err.message.includes('you are already the initiator'),'Error message did not include require-messages.');
+            assert(err.message.includes('you are already the initiator'),'Error message did not include require-message.');
         }     
     });
     it('should allow other parcipitants to join', async () => {
-        for(i = 2; i < accounts.length; i++){
+        for(i = 2; i < 5; i++){
             await eventManager.participateEventById(event.address, {from: accounts[i]});
             const participants = await eventManager.getEventParticipants(event.address);
             assert(participants.includes(accounts[i]), accounts[i] + ' couldn´t participate');
@@ -102,14 +101,35 @@ contract('event', accounts => {
         await eventManager.createUserEventItem(event.address, 'Kuchen', {from: initiator});
 
         const itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[2]});
+        
+        const itemIndex = itemCount - 1;
 
-        const item = await eventManager.getEventItemInfo(event.address, itemCount - 1, {from: accounts[2]});
+        const item = await eventManager.getEventItemInfo(event.address, itemIndex, {from: accounts[2]});
 
-        //console.log(item);
+        assert(item[0].toNumber() === itemIndex, 'Item Index does not match');
+        assert(item[1] === initiator, 'Item Creator Address doesn´t match');
         assert(item[2] === 'Kuchen', 'Der Kuchen fehlt');
+        assert(item[3].toNumber() === startTime, 'Expiration Time of Event is wrong')
         assert(item[4] === false, 'New Items must not be checked');
-        //todo check for expiration and id?
     });
+    it('shouldn´t allow items from non participant', async () => {
+        try {
+            await eventManager.createUserEventItem(event.address, 'Kuchen', {from: accounts[9]});
+            assert.fail('Non-participant was able to propose item.');
+        }
+        catch (err) {
+            assert(err.message.includes('User is not participant'),'Error message did not include require-message.' + err.message);
+        } 
+    });/*
+    it('shouldn´t allow items from non participant', async () => {
+        try {
+            await eventManager.createUserEventItem(event.address, 'Kuchen', {from: account[2]});
+            assert.fail('Non-parcipitant was able to propose item.');
+        }
+        catch (err) {
+            assert(err.message.includes('User is not allowed to update item info'),'Error message did not include require-message.');
+        } 
+    });*/
 });
 
 
