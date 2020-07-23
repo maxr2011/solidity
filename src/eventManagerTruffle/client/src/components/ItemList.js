@@ -8,7 +8,7 @@ class ItemList extends Component {
             <div>
                 <h1>ItemList</h1>
                 {this.props.items.map((item) => (
-                    <Item key={item.id} item={item} toggleItem={this.props.toggleItem}/>
+                    <Item key={item.id} item={item} toggleItem={this.props.toggleItem} delItem={this.props.delItem}/>
                 ))}
             </div>
         );

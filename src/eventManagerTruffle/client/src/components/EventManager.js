@@ -47,7 +47,11 @@ class EventManager extends React.Component {
     }
 
     toggleItem = (id) => {
-        console.log(id);
+        console.log('User wants to toggle item with id=' + id);
+    }
+
+    delItem = (id) => {
+        console.log('User wants to delete item with id=' + id);
     }
 
     render() {
