@@ -1,6 +1,7 @@
 import React from 'react';
 
 import EventManager from './EventManager.js';
+
 import logo from './logo.svg';
 import './App.css';
 
@@ -39,7 +40,7 @@ class App extends React.Component {
         loading_alert.parentNode.removeChild(loading_alert);
       }
   
-    }, 3000);
+    }, 2000);
 
   }
 

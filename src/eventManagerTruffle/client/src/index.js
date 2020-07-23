@@ -8,6 +8,7 @@ import * as serviceWorker from './serviceWorker';
 
 import drizzleOptions from './drizzleOptions.js';
 
+
 const drizzleStore = generateStore(drizzleOptions);
 const drizzle = new Drizzle(drizzleOptions, drizzleStore);
 
