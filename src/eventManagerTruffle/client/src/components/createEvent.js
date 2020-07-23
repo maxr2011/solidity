@@ -5,56 +5,51 @@ class CreateEvent extends React.Component {
 
     componentDidMount(){
         const { drizzle, drizzleState } = this.props;
-        //const drizzle = this.props.drizzle;
-        //const contract = drizzle.contracts.EventManager;
-
-        var state = drizzle.store.getState()
-
-        // If Drizzle is initialized (and therefore web3, accounts and contracts), continue.
-        if (state.drizzleStatus.initialized) {
-            this.setState({ loading: false, drizzleState , drizzle});
-
-            console.log("DrizzleState initialized! Objects:");
-            console.log(drizzle.contracts.EventManager);
-            console.log(drizzle.contracts.EventManager.methods.createUserEvent);
-
-            const eventAdress = drizzle.contracts.EventManager.methods.createUserEvent("Grillen", "Randersacker", 1598191200, 1598198400).send();
-            //const callback = drizzle.contracts.EventManager.methods.register().send();
-        }
-
-        // let drizzle know we want to call the `set` method with `value`
-
     }
 
-
-    creatEvent() {
-        if (this.state.loading) { 
+    createEvent() {
             console.log("CONSOLE: Create an event");
 
-            /*
-            // Declare this transaction to be observed. We'll receive the eventAdress for reference.
-            const eventAdress = drizzle.contracts.EventManager.methods.createUserEvent.send("test", "test", 15600000, 15700000);
+            var drizzle = this.drizzle;
+            var drizzleState = this.drizzleState;
 
-            //const eventadress = contract.methods["createUserEvent"].cacheSend("test", "test", 15600000, 15700000);
-            //contract.methods["createUserEvent"].cacheSend("test", "test", 15600000, 15700000);
-            //contract.createUserEvent.methods.cacheSend("test", "test", 15600000, 15700000);
-            //const eventadress = contract.methods.createUserEvent.send("test", "test", 15600000, 15700000);
+            var state = drizzle.store.getState()
 
-            // Use the eventAdress to display the transaction status.
-            if (state.transactionStack[eventAdress]) {
-                const txHash = state.transactionStack[eventAdress]
+            // If Drizzle is initialized (and therefore web3, accounts and contracts), continue.
+            if (state.drizzleStatus.initialized) {
+                this.setState({ loading: false, drizzleState , drizzle});
+    
+                console.log("DrizzleState initialized! Objects:");
+                console.log(drizzle.contracts.EventManager);
+                console.log(drizzle.contracts.EventManager.methods.createUserEvent);
 
-                return state.transactions[txHash].status
+                var eventName = document.getElementById('event_create_name').value;
+                var eventLocation = document.getElementById('event_create_location').value;
+                var eventStartDate = document.getElementById('event_create_start_date').value;
+                var eventEndDate = document.getElementById('event_create_end_date').value;
+    
+                console.log('Creating new Event {name: "' + eventName + '", location: "' + eventLocation + '", start_date: "' + eventStartDate + '", end_date: "' + eventEndDate + '"}');
+
+                //const eventAdress = drizzle.contracts.EventManager.methods.createUserEvent(eventName, eventLocation, eventStartDate, eventEndDate).send();
             }
-            */
-        }
     }
-
 
     render() {
         return (
-        <div>
-            <button id="create_event" onClick={this.createEvent}>Create Event</button>
+        <div id="eventCreationForm">
+
+            <form id="event_create_form" name="event_create_form">
+
+                Name: <input type="text" name="event_create_name" /> <br />
+                Ort: <input type="text" name="event_create_location" /> <br />
+                Startdatum: <input type="text" name="event_create_start_date" /> <br />
+                Enddatum: <input type="text" name="event_create_end_date" /> <br />
+
+            
+            </form>
+            
+            <button type="button" id="create_event" onClick={this.createEvent}>Create Event</button>
+            
         </div>
         );
     }

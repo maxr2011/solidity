@@ -1,10 +1,12 @@
 import React from 'react';
 
 import LoginStatus from './LoginStatus';
+import CreateEvent from './CreateEvent';
+import ItemList from './ItemList';
 
 import './EventManager.css';
-import ItemList from './ItemList';
-import AddEvent from './AddEvent';
+import Register from './Register';
+
 
 class EventManager extends React.Component {
     state = { loading: true, drizzleState: null };
@@ -58,6 +60,22 @@ class EventManager extends React.Component {
         console.log('User wants create event: ' + name + location + start + end);
     }
 
+    componentDidMount() {
+        const { drizzle } = this.props;
+
+        // subscribe to changes in the store
+        this.unsubscribe = drizzle.store.subscribe(() => {
+
+        // every time the store updates, grab the state from drizzle
+        const drizzleState = drizzle.store.getState();
+
+        // check to see if it's ready, if so, update local component state
+        if (drizzleState.drizzleStatus.initialized) {
+            this.setState({ loading: false, drizzleState });
+        }
+        });
+    }
+
     render() {
         if(this.state.loading == false) {
 
@@ -71,19 +89,25 @@ class EventManager extends React.Component {
             </div>
                 <LoginStatus drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
                 />
-
                 
                 <table>
                     <tbody>
                     <tr>
                         <td valign="top"><button id="login_button" onClick={this.login}>Login</button></td>
-                        <td valign="top"><button id="register_button" onClick={this.register}>Register</button></td>
+                        <Register drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
+                            />
                     </tr>
                     </tbody>
                 </table>
-                
+
+                <br />
+                <h2>Erstellung eines neuen Events</h2>
+
+                <CreateEvent drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
+                />
+
+
                 <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
-                <AddEvent/>
 
                 <br />
             </div>
