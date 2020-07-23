@@ -4,6 +4,7 @@ import LoginStatus from './LoginStatus';
 
 import './EventManager.css';
 import ItemList from './ItemList';
+import AddEvent from './AddEvent';
 
 class EventManager extends React.Component {
     state = { loading: true, drizzleState: null };
@@ -53,6 +54,9 @@ class EventManager extends React.Component {
     delItem = (id) => {
         console.log('User wants to delete item with id=' + id);
     }
+    addEvent = (name, location, start, end) => {
+        console.log('User wants create event: ' + name + location + start + end);
+    }
 
     render() {
         if(this.state.loading == false) {
@@ -61,7 +65,10 @@ class EventManager extends React.Component {
             <div id="eventManager">
             <div id="eventManagerSection">
                 <h2>EventManager</h2>
-
+                
+            <div className='container'>
+                    <AddEvent addEvent={this.addEvent}/>
+            </div>
                 <LoginStatus drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
                 />
 
@@ -74,7 +81,10 @@ class EventManager extends React.Component {
                     </tr>
                     </tbody>
                 </table>
-                    <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
+                
+                <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
+                <AddEvent/>
+
                 <br />
             </div>
             </div>
@@ -83,7 +93,10 @@ class EventManager extends React.Component {
         } else {
 
         return (
-            <p>EventManager did not load.</p>
+            
+            <div className='container'>
+                <p>EventManager did not load.</p>
+            </div>
         );
 
         }
