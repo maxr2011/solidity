@@ -3,9 +3,36 @@ import React from 'react';
 import LoginStatus from './LoginStatus';
 
 import './EventManager.css';
+import ItemList from './ItemList';
 
 class EventManager extends React.Component {
     state = { loading: true, drizzleState: null };
+
+    state = {
+        items: [
+            {
+                id: 1,
+                creator: 0x367E7e251F63eeccD9Af88121A2C7D9F3cD5168c,
+                title: 'Kuchen',
+                expiration: 2595424765,
+                checked: false
+            },
+            {
+                id: 2,
+                creator: 0x367E7e251F63eeccD9Af88121A2C7D9F3cD5168c,
+                title: 'Bier',
+                expiration: 2595424765,
+                checked: true
+            },
+            {
+                id: 3,
+                creator: 0x367E7e251F63eeccD9Af88121A2C7D9F3cD5168c,
+                title: 'Haggis',
+                expiration: 2595424765,
+                checked: false
+            },
+        ]
+    }
 
     doSomething() {
         console.log("do something");
@@ -19,20 +46,8 @@ class EventManager extends React.Component {
         console.log("register new user...");
     }
 
-    componentDidMount() {
-        const { drizzle } = this.props;
-
-        // subscribe to changes in the store
-        this.unsubscribe = drizzle.store.subscribe(() => {
-
-        // every time the store updates, grab the state from drizzle
-        const drizzleState = drizzle.store.getState();
-
-        // check to see if it's ready, if so, update local component state
-        if (drizzleState.drizzleStatus.initialized) {
-            this.setState({ loading: false, drizzleState });
-        }
-        });
+    toggleItem = (id) => {
+        console.log(id);
     }
 
     render() {
@@ -55,7 +70,7 @@ class EventManager extends React.Component {
                     </tr>
                     </tbody>
                 </table>
-                
+                    <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
                 <br />
             </div>
             </div>
