@@ -9,6 +9,8 @@ import CreateEvent from './CreateEvent';
 import GetUserEvents from './GetUserEvents';
 import GetParticipantEvents from './GetParticipantEvents';
 
+import ItemInfo from './ItemInfo';
+import CreateItem from './CreateItem';
 //import ItemList from './ItemList';
 
 import './EventManager.css';
@@ -137,7 +139,24 @@ class EventManager extends React.Component {
 
                 <br />
 
+                <h2>Item hinzufügen</h2>
+
+                <CreateItem drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
+
                 <br />
+
+                <h2>Item Info</h2>
+
+                <ItemInfo drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
+
+                <br /> <br /> <br />
+
+            </div>
+
+            <div id="footer">
+
+                &copy; 2020 EventManager
+
             </div>
             </div>
         );

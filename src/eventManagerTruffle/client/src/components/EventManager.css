@@ -17,6 +17,11 @@
     margin: 0px auto;
 }
 
+#item_info_buttons {
+    width: 450px;
+    margin: 0px auto;
+}
+
 #input_label {
     display: inline-block;
     text-align: left;
@@ -62,12 +67,22 @@ input[TYPE="button"], button {
     outline: none;
   }
   
-  #create_event, #register_button, #event_participate_button {
+  #create_event, #register_button, #event_participate_button, #create_item, #item_update_state {
     background: #84D773;  
     background-color: #84D773;
   }
 
-  #create_event:hover, #register_button:hover, #event_participate_button:hover {
+  #create_event:hover, #register_button:hover, #event_participate_button:hover, #create_item:hover, #item_update_state:hover {
       background: #3E8D2E;
       background-color: #3E8D2E;
+  }
+
+  #item_delete_button {
+    background: #E56E6E;
+    background-color: #E56E6E;
+  }
+
+  #item_delete_button:hover {
+    background: #C33838;
+    background-color: #C33838;
   }

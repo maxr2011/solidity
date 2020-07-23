@@ -15,12 +15,13 @@ class CreateEvent extends React.Component {
     }
 
     createEvent = () => {
+
             console.log("CONSOLE: Create an event");
 
             var drizzle = this.state.drizzle;
             var drizzleState = this.state.drizzle.drizzleState;
 
-            var state = drizzle.store.getState()
+            var state = drizzle.store.getState();
 
             // If Drizzle is initialized (and therefore web3, accounts and contracts), continue.
             if (state.drizzleStatus.initialized) {
@@ -42,6 +43,7 @@ class CreateEvent extends React.Component {
                 console.log("new event adress: " + eventAdress);
 
             }
+            
     }
 
     render() {
