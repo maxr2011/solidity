@@ -1,36 +1,33 @@
-//const { assert } = require("console");
+const { assert } = require("console");
 
 const EventManager = artifacts.require('EventManager');
 const Event = artifacts.require('Event');
 
 contract('eventManager', accounts => {
+    let doubleRegisterer = accounts[2], eventCreator = accounts[3], tripleEventCreator = accounts[4];
     before(async () => {
         eventManager = await EventManager.deployed();
-        myAccounts = accounts;
         admin = accounts[0];
-        // register half the accounts.
-        await eventManager.register({from: admin}); 
-        await eventManager.register({from: accounts[1]}); 
-        await eventManager.register({from: accounts[2]}); 
-        await eventManager.register({from: accounts[3]}); 
-        await eventManager.register({from: accounts[4]}); 
-
-        userEvents = [0,0,0,0,0];
     });
     it('should be deployable', async () => {
         assert(eventManager.address !== '');
+        console.log(await userCount());
+        assert(await userCount() === 0, 'At the start there shouldn´t be any registered accounts');
     });
-    it('should allow registration of unregistered account', async () => {
+    it('should allow registration of unregistered accounts', async () => {
         const userCountBefore = await userCount();
+        
+        for(i = 0; i < accounts.length; i++)
+            await eventManager.register({from: accounts[i]}); 
 
-        await eventManager.register({from: accounts[5]}); 
+        const userCountAfter = await userCount();
 
-        assert((await userCount() - userCountBefore) === 1, 'UserCount didn´t increment.');
-        assert(await getUserById(6) === accounts[5], 'Address of new user not saved.');
+        assert(userCountAfter - userCountBefore === accounts.length, 'UserCount didn´t increment correctly.');
+        assert(await getUserById(userCountAfter) === accounts[userCountAfter - 1], 'Address of new user not saved.');
     });
     it('should reject double registering', async () => {
         try {
-            await eventManager.register({from: accounts[2]});
+            await eventManager.register({from: doubleRegisterer});
             assert.fail('User was able to register twice.');
         }
         catch (err) {
@@ -38,17 +35,20 @@ contract('eventManager', accounts => {
         }        
     });
     it('should allow new Events', async () => {
-        await createDummyEvent(admin);
+        await createDummyEvent(eventCreator);
+
         const eventAddress = await eventManager.getEventById(await getEventCount(), {from: admin});
         assert(eventAddress !== '', 'Event Address is null.');
+
         const event = await Event.at(eventAddress);
         const info = await event.getInfo();
-        compareEventInfoWithDummy(info, eventAddress, admin);
+
+        compareEventInfoWithDummy(info, eventAddress, eventCreator); // assert-statements inside.
     });
-    it('should save events and increment eventCounter', async () => {
+    it('should increment eventCounter when creating event', async () => {
         let count = 0;
         for(i = 0; i < 3; i++){
-            await createDummyEvent(accounts[1]);
+            await createDummyEvent(tripleEventCreator);
 
             const allEvents = await getAllEvents();
             
@@ -62,12 +62,23 @@ contract('eventManager', accounts => {
         }
     });
     it('should only show own events', async () => {
-        for(i = 0; i < 5; i++){ // only registered accounts.
+        for(i = 0; i < accounts.length; i++){
             const events = await eventManager.getUserEvents({from: accounts[i]});
-            assert(events.length === userEvents[i], 'userEventCount does not match the number of created events.');
+            
+            if(accounts.indexOf(eventCreator) === i)
+            {
+                assert(events.length === 1, 'userEventCount does not match the number of created events.');
+            }
+            else if(accounts.indexOf(tripleEventCreator) === i)
+            {
+                assert(events.length === 3, 'userEventCount does not match the number of created events.');
+            }
+            else {
+                assert(events.length === 0, 'userEventCount does not match the number of created events.');
+            }
         }
     });
-});
+});/*
 // Events can only be accessed trough EventManager, but here are the Event-focused tests.
 contract('event', accounts => {
     let event = null;
@@ -242,10 +253,10 @@ contract('event', accounts => {
         
         assert(allEvents.length === 0, 'There shouldn´t be any event');
     });
-});
+});*/
 
 
-let admin = null, myAccounts = null, eventManager = null;
+let admin = null, eventManager = null;
 async function getEventCount (account = admin){
     return await eventManager.getEventCount({from: account});
 }
@@ -263,16 +274,14 @@ async function getAllEvents(){
 }
 let startTime = 2595424765, endTime = 3595424765;
 let name = 'Bingo', location = 'Park';
-let userEvents = [0,0,0,0,0];
 let _accounts = null;
 async function createDummyEvent(account)
 {
-    userEvents[myAccounts.indexOf(account)]++;
     await eventManager.createUserEvent(name,location,startTime,endTime, {from: account});
 }
 async function userCount()
 {
-    return await eventManager.getUserCount({from: admin});
+    return (await eventManager.getUserCount({from: admin})).toNumber();
 }
 async function getUserById(id)
 {
