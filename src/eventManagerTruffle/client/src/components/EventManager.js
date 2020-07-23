@@ -43,6 +43,10 @@ class EventManager extends React.Component {
         console.log("register new user...");
     }
 
+    toggleItem = (id) => {
+        console.log(id);
+    }
+
     render() {
         return (
             <div id="eventManager">
@@ -56,7 +60,7 @@ class EventManager extends React.Component {
                     </tr>
                     </tbody>
                 </table>
-                    <ItemList items={this.state.items}/>
+                    <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
                 <br />
             </div>
             </div>

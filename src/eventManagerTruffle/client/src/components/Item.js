@@ -8,12 +8,15 @@ export class Item extends Component {
         }
     }
     render() {
+        const {title, creator, expiration, id} = this.props.item;
         return (
             <div style={this.getStyle()}>
-                <h5>{this.props.item.title}</h5>
-                <p>{this.props.item.creator}</p>
-                <p>{this.props.item.expiration}</p>
-                <p>{this.props.item.checked}</p>
+                <p>
+                    <input type="checkbox" onChange={this.props.toggleItem.bind(this, id)}/>{' '}
+                    {title + '. '}
+                    {'Creator: ' + creator + '. '}
+                    {'Expires: ' + expiration + '.'}
+                </p>
             </div>
         )
     }
