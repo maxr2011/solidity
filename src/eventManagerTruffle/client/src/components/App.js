@@ -4,7 +4,7 @@ import EventManager from './EventManager.js';
 
 import logo from './logo.svg';
 import './App.css';
-
+import Header from './layout/Header.js';
 
 
 class App extends React.Component {
@@ -48,7 +48,7 @@ class App extends React.Component {
     if (this.state.loading) { 
       return (
         <div className="App">
-          
+          <Header/>
           <div id="loading_alert" className="alert alert-info" role="alert">
         
             <h4 className="alert-heading">Drizzle Status</h4>
@@ -67,7 +67,7 @@ class App extends React.Component {
 
       return (
         <div className="App">
-          
+          <Header/>
           <div id="loading_alert" className="alert alert-info" role="alert">
         
             <h4 className="alert-heading">Drizzle Status</h4>
