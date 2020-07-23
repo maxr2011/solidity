@@ -130,8 +130,9 @@ contract Event {
     }
 
     // remove participant
-    function removeParticipant(address remove_participant) public onlyManager
+    function removeParticipant(address sender, address remove_participant) public onlyManager
     {
+        require(sender == remove_participant || sender == initiator, 'sender has to be initiator or remove itself');
         // remove participant
         participants.removeFromArray(remove_participant);
     }

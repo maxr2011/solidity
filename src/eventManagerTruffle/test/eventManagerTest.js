@@ -1,3 +1,5 @@
+//const { assert } = require("console");
+
 const EventManager = artifacts.require('EventManager');
 const Event = artifacts.require('Event');
 
@@ -133,20 +135,112 @@ contract('event', accounts => {
             assert(err.message.includes('User is not allowed to update item info'),'Error message did not include require-message.' + err.message);
         } 
     });
-    it('should allow changing itemCheck by initiator or itemHolder', async () => {
+    it('should allow changing itemCheck by initiator', async () => {
         const itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[9]});
             
         const itemIndex = itemCount - 1;
 
+        const isChecked = await eventManager.getEventItemInfo(event.address, itemIndex, {from: accounts[9]});
+
         await eventManager.updateEventItemState(event.address, itemIndex, {from: initiator});
         
+        const isStillChecked = await eventManager.getEventItemInfo(event.address, itemIndex, {from: accounts[9]})
+
+        assert(isChecked !== isStillChecked, 'initiator coudn´t update ItemChecked');
+    });
+    it('should allow changing itemCheck by itemHolder', async () => {
         await eventManager.participateEventById(event.address, {from: accounts[9]});
 
         await eventManager.createUserEventItem(event.address, 'Kuchen', {from: accounts[9]});
         
-        const newItemIndex = itemIndex + 1;
+        const itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[9]});
+            
+        const itemIndex = itemCount - 1;
 
-        await eventManager.updateEventItemState(event.address, newItemIndex, {from: accounts[9]});
+        const isChecked = await eventManager.getEventItemInfo(event.address, itemIndex, {from: accounts[9]});
+
+        await eventManager.updateEventItemState(event.address, itemIndex, {from: accounts[9]});
+        
+        const isStillChecked = await eventManager.getEventItemInfo(event.address, itemIndex, {from: accounts[9]})
+
+        assert(isChecked !== isStillChecked, 'initiator coudn´t update ItemChecked');
+    });
+    it('should be possible to remove all eventItems by initiator', async () => {
+        let itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[2]}); // any account usable.
+
+        for(i = itemCount.toNumber(); i > 0; i--)
+        {
+            await eventManager.removeEventItem(event.address, 0, {from: initiator});
+        }
+        itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[2]}); // any account usable.
+
+        assert(itemCount.toNumber() === 0, 'It was not possible to remove all events');
+    });
+    it('should be possible to remove all participants by themselves', async () => {
+        let eventParticipants = await eventManager.getEventParticipants(event.address, {from: accounts[9]});
+        
+        for(i = 0; i < eventParticipants.length; i++)
+        {
+            await eventManager.removeParticipant(event.address, eventParticipants[i], {from: eventParticipants[i]});
+        }
+        eventParticipants = await eventManager.getEventParticipants(event.address, {from: accounts[9]});
+        
+        assert(eventParticipants.length === 0, 'It was not possible to remove all participants');
+    });
+    it('should be possible to re-add participants', async () => {
+        for(i = 0; i < accounts.length; i++)       
+        {
+            if(accounts[i] == initiator) continue;
+
+            await eventManager.participateEventById(event.address, {from: accounts[i]});
+        }
+        const participants = await eventManager.getEventParticipants(event.address, {from: accounts[9]});
+        
+        assert(participants.length === accounts.length - 1, 'Coudn´t add all accounts'); // intítiator does not count as participant.
+    });
+    it('should be possible to re-add eventItems', async () => {
+        for(i = 0; i < accounts.length; i++)
+        {
+            await eventManager.createUserEventItem(event.address, 'Kuchen', {from: accounts[i]});
+        }
+        const itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[2]});
+        
+        assert(itemCount.toNumber() === accounts.length, 'Not every participant could add an item');
+    });
+    it('should be possible to remove all eventItems by the participants themselves', async () => {
+        let itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[2]}); // any account usable.
+
+        for(i = itemCount; i > 0; i--)
+        {   
+            const info = await eventManager.getEventItemInfo(event.address, 0, {from: accounts[2]})
+            
+            await eventManager.removeEventItem(event.address, 0, {from: info[1]});
+        }
+        itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[2]}); // any account usable.
+
+        assert(itemCount.toNumber() === 0, 'It was not possible to remove all events');
+    });
+    it('should be possible to remove all participants by the initiator', async () => {
+        let eventParticipants = await eventManager.getEventParticipants(event.address, {from: accounts[9]});
+        
+        for(i = 0; i < eventParticipants.length; i++)
+        {
+            await eventManager.removeParticipant(event.address, eventParticipants[i], {from: initiator});
+        }
+        eventParticipants = await eventManager.getEventParticipants(event.address, {from: accounts[9]});
+        
+        assert(eventParticipants.length === 0, 'It was not possible to remove all participants');
+    });
+    it('should be possible to remove an event by initiator', async () => {
+        let allEvents = await eventManager.getAllEvents({from: admin});
+        
+        assert(allEvents.length === 1, 'There should only be 1 event');
+
+        await eventManager.removeEvent(event.address, {from: initiator});
+
+        allEvents = await eventManager.getAllEvents({from: admin});
+        
+        assert(allEvents.length === 0, 'There shouldn´t be any event');
     });
 });
 

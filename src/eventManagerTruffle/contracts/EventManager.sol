@@ -213,6 +213,12 @@ contract EventManager {
         return event_address.getParticipantsArray();
     }
 
+    // remove event participant
+    // access onlyUser
+    function removeParticipant(EventContract.Event event_address, address participant) public onlyUser
+    {
+        event_address.removeParticipant(msg.sender, participant);
+    }
 
     // propose new event item
     // access: user only
