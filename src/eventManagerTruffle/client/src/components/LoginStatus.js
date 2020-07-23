@@ -1,7 +1,7 @@
 import React from "react";
 
 class LoginStatus extends React.Component {
-    state = { dataKey: null };
+    state = { loginStatus: null };
 
     componentDidMount() {
 
@@ -11,10 +11,12 @@ class LoginStatus extends React.Component {
         var state = drizzle.store.getState();
 
         if (state.drizzleStatus.initialized) {
-
-            const dataKey = drizzle.contracts.EventManager.methods.login.cacheCall();
-
-            console.log(state.contracts.EventManager.login[dataKey].value);
+        
+            // Für das dynamische Laden des Dropdownmenues 
+            contract.methods.login().call().then(loginStatus => {
+              this.setState({ loginStatus });
+              console.log("logged in: " + loginStatus);
+            });
 
         }
 
@@ -38,11 +40,33 @@ class LoginStatus extends React.Component {
 
         const ContractState = this.props.drizzleState.contracts;
 
-        return (
-            <div id="login_status">
-                <p> login status:  </p>
-            </div> 
-        );
+        var login_status = this.state.loginStatus;
+        console.log(login_status);
+
+        if(login_status !== undefined && login_status != null) {
+
+            var login_status_text;
+            if(login_status) {
+                login_status_text = "Eingeloggt";
+            } else {
+                login_status_text = "Nicht Eingeloggt";
+            }
+
+            return (
+                <div id="login_status">
+                    <p> Status: {login_status_text}</p>
+                </div> 
+            );
+
+        } else {
+
+            return (
+                <div id="login_status">
+                    <p> login status: loading</p>
+                </div> 
+            );
+
+        }
 
     }
 

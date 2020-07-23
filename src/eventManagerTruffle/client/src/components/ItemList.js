@@ -6,7 +6,7 @@ class ItemList extends Component {
     render() {
         return (
             <div>
-                <h1>ItemList</h1>
+                <h2>ItemList</h2>
                 {this.props.items.map((item) => (
                     <Item key={item.id} item={item} toggleItem={this.props.toggleItem}/>
                 ))}

@@ -1,9 +1,11 @@
 import React from 'react';
 
 import LoginStatus from './LoginStatus';
+import CreateEvent from './CreateEvent';
+import ItemList from './ItemList';
 
 import './EventManager.css';
-import ItemList from './ItemList';
+
 
 class EventManager extends React.Component {
     state = { loading: true, drizzleState: null };
@@ -50,6 +52,22 @@ class EventManager extends React.Component {
         console.log(id);
     }
 
+    componentDidMount() {
+        const { drizzle } = this.props;
+
+        // subscribe to changes in the store
+        this.unsubscribe = drizzle.store.subscribe(() => {
+
+        // every time the store updates, grab the state from drizzle
+        const drizzleState = drizzle.store.getState();
+
+        // check to see if it's ready, if so, update local component state
+        if (drizzleState.drizzleStatus.initialized) {
+            this.setState({ loading: false, drizzleState });
+        }
+        });
+    }
+
     render() {
         if(this.state.loading == false) {
 
@@ -60,7 +78,6 @@ class EventManager extends React.Component {
 
                 <LoginStatus drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
                 />
-
                 
                 <table>
                     <tbody>
@@ -70,7 +87,16 @@ class EventManager extends React.Component {
                     </tr>
                     </tbody>
                 </table>
-                    <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
+
+                <br />
+                <h2>Erstellung eines neuen Events</h2>
+
+                <CreateEvent drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
+                />
+
+
+                <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
+
                 <br />
             </div>
             </div>
