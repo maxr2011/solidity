@@ -1,11 +1,12 @@
 import React from 'react';
 
-import LoginStatus from './LoginStatus';
+import Login from './Login';
 import CreateEvent from './CreateEvent';
 import ItemList from './ItemList';
 
 import './EventManager.css';
 import Register from './Register';
+import LoginStatus from './LoginStatus';
 
 
 class EventManager extends React.Component {
@@ -70,22 +71,28 @@ class EventManager extends React.Component {
     }
 
     render() {
-        if(this.state.loading == false) {
+        if(this.state.loading) {
+
+            return (
+                <p>EventManager did not load.</p>
+            );
+
+        } else {
 
         return (
             <div id="eventManager">
             <div id="eventManagerSection">
                 <h2>EventManager</h2>
 
-                <LoginStatus drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
-                />
+                <div id="login_status">
+                    <LoginStatus drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
+                </div>
                 
                 <table>
                     <tbody>
                     <tr>
-                        <td valign="top"><button id="login_button" onClick={this.login}>Login</button></td>
-                        <Register drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
-                            />
+                        <td valign="top"><Login drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} /></td>
+                        <td valign="top"><Register drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} /></td>
                     </tr>
                     </tbody>
                 </table>
@@ -93,24 +100,17 @@ class EventManager extends React.Component {
                 <br />
                 <h2>Erstellung eines neuen Events</h2>
 
-                <CreateEvent drizzle={this.props.drizzle} drizzleState={this.state.drizzleState}
-                />
+                <CreateEvent drizzle={this.props.drizzle} drizzleState={this.state.drizzleState} />
 
-
-                <ItemList items={this.state.items} toggleItem={this.toggleItem}/>
+                <ItemList items={this.state.items} toggleItem={this.toggleItem} />
 
                 <br />
             </div>
             </div>
         );
 
-        } else {
+        } 
 
-        return (
-            <p>EventManager did not load.</p>
-        );
-
-        }
     }
 
 }

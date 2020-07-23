@@ -5,13 +5,20 @@ class CreateEvent extends React.Component {
 
     componentDidMount(){
         const { drizzle, drizzleState } = this.props;
+
+        var state = drizzle.store.getState();
+
+        // If Drizzle is initialized (and therefore web3, accounts and contracts), continue.
+        if (state.drizzleStatus.initialized) {
+            this.setState({ loading: false, drizzleState , drizzle});
+        }
     }
 
-    createEvent() {
+    createEvent = () => {
             console.log("CONSOLE: Create an event");
 
-            var drizzle = this.drizzle;
-            var drizzleState = this.drizzleState;
+            var drizzle = this.state.drizzle;
+            var drizzleState = this.state.drizzle.drizzleState;
 
             var state = drizzle.store.getState()
 
@@ -21,7 +28,7 @@ class CreateEvent extends React.Component {
     
                 console.log("DrizzleState initialized! Objects:");
                 console.log(drizzle.contracts.EventManager);
-                console.log(drizzle.contracts.EventManager.methods.createUserEvent);
+                console.log(drizzle.contracts.EventManager.methods.createUserEvent); 
 
                 var eventName = document.getElementById('event_create_name').value;
                 var eventLocation = document.getElementById('event_create_location').value;
@@ -30,7 +37,10 @@ class CreateEvent extends React.Component {
     
                 console.log('Creating new Event {name: "' + eventName + '", location: "' + eventLocation + '", start_date: "' + eventStartDate + '", end_date: "' + eventEndDate + '"}');
 
-                //const eventAdress = drizzle.contracts.EventManager.methods.createUserEvent(eventName, eventLocation, eventStartDate, eventEndDate).send();
+                const eventAdress = drizzle.contracts.EventManager.methods.createUserEvent(eventName, eventLocation, eventStartDate, eventEndDate).send();
+
+                console.log("new event adress: " + eventAdress);
+
             }
     }
 
@@ -40,15 +50,14 @@ class CreateEvent extends React.Component {
 
             <form id="event_create_form" name="event_create_form">
 
-                Name: <input type="text" name="event_create_name" /> <br />
-                Ort: <input type="text" name="event_create_location" /> <br />
-                Startdatum: <input type="text" name="event_create_start_date" /> <br />
-                Enddatum: <input type="text" name="event_create_end_date" /> <br />
+                Name: <input type="text" name="event_create_name" id="event_create_name" /> <br />
+                Ort: <input type="text" name="event_create_location" id="event_create_location" /> <br />
+                Startdatum: <input type="text" name="event_create_start_date" id="event_create_start_date" /> <br />
+                Enddatum: <input type="text" name="event_create_end_date" id="event_create_end_date" /> <br />
 
+                <button type="button" id="create_event" onClick={this.createEvent}>Create Event</button>
             
             </form>
-            
-            <button type="button" id="create_event" onClick={this.createEvent}>Create Event</button>
             
         </div>
         );

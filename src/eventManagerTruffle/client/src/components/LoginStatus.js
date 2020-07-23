@@ -1,7 +1,7 @@
 import React from "react";
 
 class LoginStatus extends React.Component {
-    state = { loginStatus: null };
+    state = { loginStatus: null, drizzleState: null, drizzle: null };
 
     componentDidMount() {
 
@@ -12,6 +12,8 @@ class LoginStatus extends React.Component {
 
         if (state.drizzleStatus.initialized) {
         
+            this.setState({ loading: false, drizzleState , drizzle });
+
             // Für das dynamische Laden des Dropdownmenues 
             contract.methods.login().call().then(loginStatus => {
               this.setState({ loginStatus });
@@ -22,23 +24,7 @@ class LoginStatus extends React.Component {
 
     }
 
-    getLoginState() {
-
-        var state = this.drizzle.store.getState();
-
-        if (state.drizzleStatus.initialized) {
-
-            const dataKey = this.drizzle.contracts.EventManager.methods.login.cacheCall();
-
-            return state.contracts.EventManager.login[dataKey].value;
-
-        }
-
-    }
-
     render() {
-
-        const ContractState = this.props.drizzleState.contracts;
 
         var login_status = this.state.loginStatus;
 
