@@ -120,16 +120,34 @@ contract('event', accounts => {
         catch (err) {
             assert(err.message.includes('User is not participant'),'Error message did not include require-message.' + err.message);
         } 
-    });/*
-    it('shouldn´t allow items from non participant', async () => {
+    });
+    it('shouldn´t allow changing itemCheck by non initiator or non itemHolder', async () => {
+        const itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[9]});
+    
+        const itemIndex = itemCount - 1;
         try {
-            await eventManager.createUserEventItem(event.address, 'Kuchen', {from: account[2]});
-            assert.fail('Non-parcipitant was able to propose item.');
+            await eventManager.updateEventItemState(event.address, itemIndex, {from: accounts[9]});
+            assert.fail('Unauthorized account for changing eventItemState');
         }
         catch (err) {
-            assert(err.message.includes('User is not allowed to update item info'),'Error message did not include require-message.');
+            assert(err.message.includes('User is not allowed to update item info'),'Error message did not include require-message.' + err.message);
         } 
-    });*/
+    });
+    it('should allow changing itemCheck by initiator or itemHolder', async () => {
+        const itemCount = await eventManager.getEventItemCount(event.address, {from: accounts[9]});
+            
+        const itemIndex = itemCount - 1;
+
+        await eventManager.updateEventItemState(event.address, itemIndex, {from: initiator});
+        
+        await eventManager.participateEventById(event.address, {from: accounts[9]});
+
+        await eventManager.createUserEventItem(event.address, 'Kuchen', {from: accounts[9]});
+        
+        const newItemIndex = itemIndex + 1;
+
+        await eventManager.updateEventItemState(event.address, newItemIndex, {from: accounts[9]});
+    });
 });
 
 
