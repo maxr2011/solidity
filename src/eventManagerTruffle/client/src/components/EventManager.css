@@ -13,7 +13,7 @@
 }
 
 #event_info_buttons {
-    width: 300px;
+    width: 650px;
     margin: 0px auto;
 }
 
@@ -77,12 +77,12 @@ input[TYPE="button"], button {
       background-color: #3E8D2E;
   }
 
-  #item_delete_button {
+  #item_delete_button, #event_remove_button {
     background: #E56E6E;
     background-color: #E56E6E;
   }
 
-  #item_delete_button:hover {
+  #item_delete_button:hover, #event_remove_button:hover {
     background: #C33838;
     background-color: #C33838;
   }
