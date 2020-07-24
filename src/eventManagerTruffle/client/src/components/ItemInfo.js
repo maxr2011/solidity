@@ -17,6 +17,29 @@ class ItemInfo extends React.Component {
 
     }
 
+    timestampConvert(unix_timestamp) {
+
+        var a = new Date(unix_timestamp * 1000);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var year = a.getFullYear();
+        var month = months[a.getMonth()];
+        var date = a.getDate();
+        var hour = a.getHours();
+        var min = a.getMinutes();
+        var sec = a.getSeconds();
+
+        if(min < 10) {
+            min = '0'+min;
+        }
+        if(sec < 10) {
+            sec = '0'+sec;
+        }
+
+        var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+        return time;
+
+    }
+
     itemInfo = () => {
 
         console.log("getting item info...");
@@ -43,7 +66,7 @@ class ItemInfo extends React.Component {
                     checked = 'Ja';
                 }
 
-                document.getElementById('item_info').innerHTML= "Name: " + itemInfo['item_name'] + "<br /> Besitzer: " + itemInfo['item_holder'] + "<br /> Bestätigt: " + checked + "<br /> Läuft ab: " + itemInfo['item_time_expiration'] + "<br />";
+                document.getElementById('item_info').innerHTML= "Name: " + itemInfo['item_name'] + "<br /> Besitzer: " + itemInfo['item_holder'] + "<br /> Bestätigt: " + checked + "<br /> Läuft ab: " + this.timestampConvert(itemInfo['item_time_expiration']) + "<br />";
                 
             });
 
